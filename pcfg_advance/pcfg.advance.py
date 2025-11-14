@@ -3,10 +3,13 @@ import itertools
 import gc
 import os
 from test import test
-from generate_rules import FILE_NAME
+from generate_rules import FILE_NAME as RULE_FILE_NAME
 
-# FILE_NAME = 'yahoo'
-FILE_NAME = 'csdn'
+# Default dataset follows generate_rules unless overridden via env
+FILE_NAME = RULE_FILE_NAME if RULE_FILE_NAME else 'csdn'
+env_filename = os.getenv('PCFG_DATASET')
+if env_filename:
+    FILE_NAME = env_filename.lower()
 FILE_PATH = f"./data/data_{FILE_NAME}.pkl"
 
 def print_lst(lst):

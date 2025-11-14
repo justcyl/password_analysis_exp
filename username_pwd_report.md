@@ -31,3 +31,28 @@
 3. **长度/模式权重**：基于 `username_pattern_matrix.csv` 的条件分布调整 PCFG 的模式优先级与递归深度控制，让生成过程优先覆盖高概率的长度组合。
 
 通过以上三条改造，可将数据驱动的用户名信息完整注入 PCFG 生成与评分流程，显著提高利用用户名先验知识的攻击效率。
+
+## PCFG 用户名 Token A/B 测试
+
+### 测试流程
+- 预处理：使用 `uv run python - <<'PY' ... split_data.py ...` 分别生成 `data/data_csdn.pkl` 与 `data/data_yahoo.pkl`，保证每个数据集都有训练/测试划分。
+- 生成 + 评测：依次运行
+  - `PCFG_DATASET=csdn uv run python pcfg_advance/pcfg.advance.py`
+  - `ENABLE_USERNAME_TOKENS=0 PCFG_DATASET=csdn uv run python pcfg_advance/pcfg.advance.py`
+  - `PCFG_DATASET=yahoo uv run python pcfg_advance/pcfg.advance.py`
+  - `ENABLE_USERNAME_TOKENS=0 PCFG_DATASET=yahoo uv run python pcfg_advance/pcfg.advance.py`
+- `pcfg.advance.py` 会生成 20 万条候选至 `pcfg_advance/<dataset>_{genpwds}.txt`，随后自动调用 `pcfg_advance/test.py` 对 `data/data_<dataset>.pkl` 的测试集进行撞库评估，结果写入 `pcfg_advance/res.txt`，命中样本也同步追加到 `pcfg_advance/info.txt`。
+
+### 测试结果（200k guesses）
+
+| 数据集 | Token 状态 | 命中条数 | 测试集规模 | 命中率 |
+| --- | --- | --- | --- | --- |
+| csdn | 启用 | 11,940 | 50,000 | 0.23880 |
+| csdn | 关闭 | 11,854 | 50,000 | 0.23708 |
+| yahoo | 启用 | 11,000 | 50,000 | 0.22000 |
+| yahoo | 关闭 | 11,011 | 50,000 | 0.22022 |
+
+### 结论
+- CSDN：用户名 token 提升了约 +0.17 个百分点的命中率（+86 条命中），验证高频 token 与 CSDN 样本分布一致，值得在规则库中长期保留。
+- Yahoo：基于 CSDN 统计得到的 token 在 Yahoo 上略降 0.02 个百分点（-11 条命中），提示需要再针对 Yahoo 计算 `analysis/results/username_overlap.csv` 并拆分域名/来源后再注入，否则会稀释概率质量。
+- 统一使用环境变量 `PCFG_DATASET` 与 `ENABLE_USERNAME_TOKENS` 可以快速复现实验，`pcfg_advance/res.txt` 也已记录本轮四组命中率，方便后续在 PR 中引用。
