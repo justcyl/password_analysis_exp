@@ -7,7 +7,7 @@ from pypinyin import lazy_pinyin
 
 def word_dataset_processing():
     # 处理雅虎数据集
-    yahoo_dir = './raw_data/plaintxt_yahoo/plaintxt_yahoo.txt'
+    yahoo_dir = './raw_data/plaintxt_yahoo.txt'
     with open(yahoo_dir, 'r', encoding='unicode_escape') as f:
         lines = f.readlines()
         header = lines[3070]
@@ -19,7 +19,7 @@ def word_dataset_processing():
     f.close()
     
     # 处理CSDN数据集
-    csdn_dir = 'D:\\MyStudy\\UCAS\\Web_Security\\raw_data\\plaintxt_csdn\\www.csdn.net_utf-8.txt'
+    csdn_dir = './raw_data/csdn.txt'
     with open(csdn_dir, 'r', encoding='utf-8') as f:
         lines = f.readlines()
 
@@ -51,8 +51,8 @@ def pinyin_corpus_processing():
 
 
 def main():
-    # word_dataset_processing()
-    pinyin_corpus_processing()
+    word_dataset_processing()
+    # pinyin_corpus_processing()
 
 
 if __name__ == "__main__":
