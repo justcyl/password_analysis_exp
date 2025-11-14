@@ -29,7 +29,7 @@ class PCFG:
                 char_rule_filename='char_lib.txt', 
                 number_rule_filename='number_rule.txt',
                 pattern_rule_filename='pattern_rule.txt',
-                username_token_filename='lib/username_tokens.txt'):
+                username_token_filename=None):
 
         self.base_dir = os.path.dirname(os.path.abspath(__file__))
         if not os.path.isabs(data_dir):
@@ -46,8 +46,9 @@ class PCFG:
         self.rule_char = self.get_rule(char_rule) # 长度与内容的映射
         self.rule_number = self.get_rule(number_rule)
         self.username_tokens = []
+        self.username_token_path = self._resolve_username_token_path(username_token_filename)
         if self.enable_username_tokens:
-            self.username_tokens = self.load_username_tokens(username_token_filename)
+            self.username_tokens = self.load_username_tokens(self.username_token_path)
 
         self.limit = 1000
         self.username_token_limit = 50
@@ -178,6 +179,18 @@ class PCFG:
             entries.extend(items)
         entries.sort(key=lambda item: item[1], reverse=True)
         return entries[:limit]
+
+    def _resolve_username_token_path(self, override_path):
+        env_override = os.getenv('USERNAME_TOKEN_FILE')
+        if override_path:
+            return override_path
+        if env_override:
+            return env_override
+        dataset_specific = f'lib/username_tokens_{FILE_NAME}.txt'
+        dataset_path = os.path.join(self.base_dir, dataset_specific)
+        if os.path.exists(dataset_path):
+            return dataset_specific
+        return 'lib/username_tokens.txt'
 
 if __name__ == "__main__":
     pcfg = PCFG()

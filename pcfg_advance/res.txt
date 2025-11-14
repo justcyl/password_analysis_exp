@@ -12,3 +12,7 @@ csdn, char_lib.txt, number_rule.txt, result = 0.2388
 csdn, char_lib.txt, number_rule.txt, result = 0.23708
 yahoo, char_lib.txt, number_rule.txt, result = 0.22
 yahoo, char_lib.txt, number_rule.txt, result = 0.22022
+csdn, char_lib.txt, number_rule.txt, result = 0.2388
+csdn, char_lib.txt, number_rule.txt, result = 0.23708
+yahoo, char_lib.txt, number_rule.txt, result = 0.21976
+yahoo, char_lib.txt, number_rule.txt, result = 0.22022
