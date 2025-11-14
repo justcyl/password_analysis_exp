@@ -2,8 +2,7 @@
 
 ## 数据与准备
 - 数据源：`data/csdn.txt` 与 `data/yahoo.txt`。两份文件分别以 `username # password # email`（CSDN）与 `id:email:password`（Yahoo）格式保存。
-- 实现脚本：按照 `AGENTS.md` 计划新增 `analysis/username_overlap.py`、`analysis/username_transform_rules.py`、`analysis/username_pattern_corr.py`，运行命令均使用 `uv run python ...`，结果写入 `analysis/results/`。
-- 字体支持：在涉及 matplotlib 的脚本中添加 `plt.rcParams['font.sans-serif'] = ['Arial Unicode MS']`，以确保中文标题在输出图像中正常显示。
+- 实现脚本：新增 `analysis/username_overlap.py`、`analysis/username_transform_rules.py`、`analysis/username_pattern_corr.py`，运行命令均使用 `uv run python ...`，结果写入 `analysis/results/`。
 - 有效样本：解析后得到 CSDN 6,427,769 条、Yahoo 442,837 条（原 `data/yahoo.txt` 共 453,492 行，因缺少口令或字段的 10,655 行被过滤），也解释了旧脚本只处理 1,003 条 Yahoo 数据的原因。
 
 ## 共享子串与词汇复用分析
