@@ -25,7 +25,15 @@ class PCFG:
                 # char_rule_filename='char_rule.txt', 
                 char_rule_filename='char_lib.txt', 
                 number_rule_filename='number_rule.txt',
-                pattern_rule_filename='pattern_rule.txt'):
+                pattern_rule_filename='pattern_rule.txt',
+                username_token_filename='lib/username_tokens.txt'):
+
+        self.base_dir = os.path.dirname(os.path.abspath(__file__))
+        if not os.path.isabs(data_dir):
+            data_dir = os.path.join(self.base_dir, data_dir)
+        self.data_dir = data_dir
+        env_flag = os.getenv('ENABLE_USERNAME_TOKENS', '1').lower()
+        self.enable_username_tokens = env_flag not in ('0', 'false', 'off', 'no')
 
         char_rule = self.get_data(data_dir, char_rule_filename)
         number_rule = self.get_data(data_dir, number_rule_filename)
@@ -34,12 +42,18 @@ class PCFG:
 
         self.rule_char = self.get_rule(char_rule) # 长度与内容的映射
         self.rule_number = self.get_rule(number_rule)
+        self.username_tokens = []
+        if self.enable_username_tokens:
+            self.username_tokens = self.load_username_tokens(username_token_filename)
 
         self.limit = 1000
+        self.username_token_limit = 50
+        self.username_numeric_limit = 25
+        self.username_char_limit = 25
 
-        with open('res.txt', 'a', encoding='utf-8') as f:
+        with open(os.path.join(self.base_dir, 'res.txt'), 'a', encoding='utf-8') as f:
             f.write('{}, {}, {}, result = '.format(FILE_NAME, char_rule_filename, number_rule_filename))
-        with open('info.txt', 'a', encoding='utf-8') as f:
+        with open(os.path.join(self.base_dir, 'info.txt'), 'a', encoding='utf-8') as f:
             f.write('{}, {}, {}, infos:\n'.format(FILE_NAME, char_rule_filename, number_rule_filename))
 
     def _str2tuple(self, rule):
@@ -69,6 +83,26 @@ class PCFG:
             rule[length].append([content, p])
         return rule
 
+    def load_username_tokens(self, rel_path):
+        filepath = rel_path
+        if not os.path.isabs(filepath):
+            filepath = os.path.join(self.base_dir, rel_path)
+        if not os.path.exists(filepath):
+            return []
+        tokens = []
+        with open(filepath, 'r', encoding='utf-8') as f:
+            for line in f:
+                parts = line.strip().split(' ')
+                if len(parts) != 2:
+                    continue
+                token, prob = parts
+                try:
+                    tokens.append([token, float(prob)])
+                except ValueError:
+                    continue
+        tokens.sort(key=lambda item: item[1], reverse=True)
+        return tokens
+
     def generate(self):
         res = []
         for rule in tqdm(self.pattern_rules):
@@ -87,6 +121,9 @@ class PCFG:
 
             del gen_pwds
             gc.collect()
+        if self.enable_username_tokens:
+            username_pwds = self._generate_username_token_candidates()
+            res.extend(username_pwds)
         res.sort(key=lambda item : item[1], reverse=True)
         return res
 
@@ -113,13 +150,38 @@ class PCFG:
         else:
             return first_pwds
 
+    def _generate_username_token_candidates(self):
+        if not self.username_tokens:
+            return []
+        tokens = self.username_tokens[:self.username_token_limit]
+        numeric_rules = self._get_top_rule_entries(self.rule_number, self.username_numeric_limit)
+        char_rules = self._get_top_rule_entries(self.rule_char, self.username_char_limit)
+
+        res = []
+        for token, token_prob in tokens:
+            res.append([token, token_prob])
+            for number, number_prob in numeric_rules:
+                combined = token_prob * number_prob
+                res.append([token + number, combined])
+                res.append([number + token, combined])
+            for word, word_prob in char_rules:
+                combined = token_prob * word_prob
+                res.append([token + word, combined])
+        return res
+
+    def _get_top_rule_entries(self, rule_dict, limit):
+        entries = []
+        for items in rule_dict.values():
+            entries.extend(items)
+        entries.sort(key=lambda item: item[1], reverse=True)
+        return entries[:limit]
+
 if __name__ == "__main__":
     pcfg = PCFG()
     gen_pwds = pcfg.generate()
-    with open(f'./{FILE_NAME}_genpwds.txt', 'w') as f:
+    output_path = os.path.join(pcfg.base_dir, f'{FILE_NAME}_genpwds.txt')
+    with open(output_path, 'w') as f:
         for gen_pwd in gen_pwds[:200000]:
             f.write(f'{gen_pwd[0]} {gen_pwd[1]}\n')
     
     test(FILE_NAME)
-
-
