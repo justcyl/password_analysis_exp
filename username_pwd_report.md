@@ -6,7 +6,11 @@
 - 有效样本：解析后得到 CSDN 6,427,769 条、Yahoo 442,837 条（原 `data/yahoo.txt` 共 453,492 行，因缺少口令或字段的 10,655 行被过滤），也解释了旧脚本只处理 1,003 条 Yahoo 数据的原因。
 
 ## 共享子串与词汇复用分析
-- 方法：拆分用户名、本地邮箱段与域名，与口令一起做 token 化（精确匹配/大小写无关/Levenshtein≤1），输出 `analysis/results/username_overlap.csv` 与可视化表格 `analysis/results/username_overlap_pie.html`（[点击查看](analysis/results/username_overlap_pie.html)）。
+- 方法：拆分用户名、本地邮箱段与域名，与口令一起做 token 化（精确匹配/大小写无关/Levenshtein≤1），输出 `analysis/results/username_overlap.csv` 与可视化表格 `analysis/results/username_overlap_pie.html`。
+- 可视化：
+  <div style="margin:12px 0;">
+    <iframe src="analysis/results/username_overlap_pie.html" width="100%" height="420" loading="lazy"></iframe>
+  </div>
 - 结果：整体 18.21% 的样本在密码中复用了用户名 token（CSDN 19.23%，Yahoo 3.37%）；Levenshtein≤1 覆盖率为 2.37%。Top-10 共享 token（`analysis/results/username_overlap.csv:2-11`）以 `a`、`qq`、`123`、`com`、`520` 等邮箱常用片段和顺序数字为主，验证了数据驱动词库扩展的可行性。
 - 落地：把覆盖率超过 0.3% 的 token 写入 `pcfg_advance/lib/username_tokens.txt`，并在 `generate_rules.py` 中生成 `token + 数字/符号` 组合；命中率可通过 `pcfg_advance/test.py` 对比引入/移除 token 后的结果来验证。
 
