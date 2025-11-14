@@ -1,0 +1,433 @@
+{
+  "category_counts": {
+    "no_relation": 6267887,
+    "prefix_append": 17904,
+    "edit_distance_1": 398007,
+    "contains_username": 139757,
+    "exact_casefold": 309538,
+    "exact_case_sensitive": 294648,
+    "suffix_digits": 84339,
+    "suffix_append": 37832,
+    "repeated_username": 7034,
+    "edit_distance_2": 99401,
+    "reverse_username": 839,
+    "leet_substitution": 51155,
+    "prefix_digits": 5081,
+    "wrap_username": 126
+  },
+  "dataset_breakdown": {
+    "csdn": {
+      "no_relation": 5829442,
+      "prefix_append": 17776,
+      "edit_distance_1": 395842,
+      "contains_username": 138325,
+      "exact_casefold": 308157,
+      "exact_case_sensitive": 293336,
+      "suffix_digits": 83613,
+      "suffix_append": 37380,
+      "repeated_username": 7024,
+      "edit_distance_2": 98147,
+      "reverse_username": 804,
+      "leet_substitution": 51092,
+      "prefix_digits": 5039,
+      "wrap_username": 119
+    },
+    "yahoo": {
+      "no_relation": 438445,
+      "exact_casefold": 1381,
+      "edit_distance_1": 2165,
+      "exact_case_sensitive": 1312,
+      "suffix_digits": 726,
+      "contains_username": 1432,
+      "prefix_append": 128,
+      "suffix_append": 452,
+      "edit_distance_2": 1254,
+      "reverse_username": 35,
+      "leet_substitution": 63,
+      "prefix_digits": 42,
+      "repeated_username": 10,
+      "wrap_username": 7
+    }
+  },
+  "examples": {
+    "no_relation": [
+      {
+        "dataset": "csdn",
+        "username": "zdg",
+        "password": "12344321"
+      },
+      {
+        "dataset": "csdn",
+        "username": "LaoZheng",
+        "password": "670203313747"
+      },
+      {
+        "dataset": "csdn",
+        "username": "fstao",
+        "password": "730413"
+      },
+      {
+        "dataset": "csdn",
+        "username": "huwolf",
+        "password": "2535263"
+      },
+      {
+        "dataset": "csdn",
+        "username": "cadcjl",
+        "password": "KIC43dk6!"
+      }
+    ],
+    "prefix_append": [
+      {
+        "dataset": "csdn",
+        "username": "JinBo",
+        "password": "ljinbo"
+      },
+      {
+        "dataset": "csdn",
+        "username": "jxl",
+        "password": "jxljxl"
+      },
+      {
+        "dataset": "csdn",
+        "username": "lighttop",
+        "password": "cxlighttop"
+      },
+      {
+        "dataset": "csdn",
+        "username": "peter",
+        "password": "xiapeter"
+      },
+      {
+        "dataset": "csdn",
+        "username": "toto",
+        "password": "aoyitoto"
+      }
+    ],
+    "edit_distance_1": [
+      {
+        "dataset": "csdn",
+        "username": "JinBo",
+        "password": "ljinbo"
+      },
+      {
+        "dataset": "csdn",
+        "username": "wangang",
+        "password": "wangang"
+      },
+      {
+        "dataset": "csdn",
+        "username": "Aswind",
+        "password": "aswind"
+      },
+      {
+        "dataset": "csdn",
+        "username": "BlackSword",
+        "password": "blacksword"
+      },
+      {
+        "dataset": "csdn",
+        "username": "jamstang",
+        "password": "jamstang"
+      }
+    ],
+    "contains_username": [
+      {
+        "dataset": "csdn",
+        "username": "JinBo",
+        "password": "ljinbo"
+      },
+      {
+        "dataset": "csdn",
+        "username": "zhy",
+        "password": "zhy1428"
+      },
+      {
+        "dataset": "csdn",
+        "username": "jxl",
+        "password": "jxljxl"
+      },
+      {
+        "dataset": "csdn",
+        "username": "robin",
+        "password": "robinson"
+      },
+      {
+        "dataset": "csdn",
+        "username": "Hans",
+        "password": "hans72"
+      }
+    ],
+    "exact_casefold": [
+      {
+        "dataset": "csdn",
+        "username": "wangang",
+        "password": "wangang"
+      },
+      {
+        "dataset": "csdn",
+        "username": "Aswind",
+        "password": "aswind"
+      },
+      {
+        "dataset": "csdn",
+        "username": "BlackSword",
+        "password": "blacksword"
+      },
+      {
+        "dataset": "csdn",
+        "username": "jamstang",
+        "password": "jamstang"
+      },
+      {
+        "dataset": "csdn",
+        "username": "jing",
+        "password": "jing"
+      }
+    ],
+    "exact_case_sensitive": [
+      {
+        "dataset": "csdn",
+        "username": "wangang",
+        "password": "wangang"
+      },
+      {
+        "dataset": "csdn",
+        "username": "jamstang",
+        "password": "jamstang"
+      },
+      {
+        "dataset": "csdn",
+        "username": "jing",
+        "password": "jing"
+      },
+      {
+        "dataset": "csdn",
+        "username": "chill",
+        "password": "chill"
+      },
+      {
+        "dataset": "csdn",
+        "username": "wanglin",
+        "password": "wanglin"
+      }
+    ],
+    "suffix_digits": [
+      {
+        "dataset": "csdn",
+        "username": "zhy",
+        "password": "zhy1428"
+      },
+      {
+        "dataset": "csdn",
+        "username": "Hans",
+        "password": "hans72"
+      },
+      {
+        "dataset": "csdn",
+        "username": "tide",
+        "password": "tide9999"
+      },
+      {
+        "dataset": "csdn",
+        "username": "zhs",
+        "password": "zhs123"
+      },
+      {
+        "dataset": "csdn",
+        "username": "wf",
+        "password": "wf1947"
+      }
+    ],
+    "suffix_append": [
+      {
+        "dataset": "csdn",
+        "username": "jxl",
+        "password": "jxljxl"
+      },
+      {
+        "dataset": "csdn",
+        "username": "robin",
+        "password": "robinson"
+      },
+      {
+        "dataset": "csdn",
+        "username": "Siney",
+        "password": "sineysoft"
+      },
+      {
+        "dataset": "csdn",
+        "username": "HM",
+        "password": "hmdnegel"
+      },
+      {
+        "dataset": "csdn",
+        "username": "cgj",
+        "password": "cgjjhy"
+      }
+    ],
+    "repeated_username": [
+      {
+        "dataset": "csdn",
+        "username": "jxl",
+        "password": "jxljxl"
+      },
+      {
+        "dataset": "csdn",
+        "username": "oyrl",
+        "password": "oyrloyrl"
+      },
+      {
+        "dataset": "csdn",
+        "username": "zhc",
+        "password": "zhczhc"
+      },
+      {
+        "dataset": "csdn",
+        "username": "4687",
+        "password": "46874687"
+      },
+      {
+        "dataset": "csdn",
+        "username": "jiq",
+        "password": "jiqjiq"
+      }
+    ],
+    "edit_distance_2": [
+      {
+        "dataset": "csdn",
+        "username": "Hans",
+        "password": "hans72"
+      },
+      {
+        "dataset": "csdn",
+        "username": "lighttop",
+        "password": "cxlighttop"
+      },
+      {
+        "dataset": "csdn",
+        "username": "vc1999",
+        "password": "1999"
+      },
+      {
+        "dataset": "csdn",
+        "username": "aspring",
+        "password": "spring1"
+      },
+      {
+        "dataset": "csdn",
+        "username": "yrh",
+        "password": "yrhlj"
+      }
+    ],
+    "reverse_username": [
+      {
+        "dataset": "csdn",
+        "username": "rhr",
+        "password": "rhr"
+      },
+      {
+        "dataset": "csdn",
+        "username": "qdq",
+        "password": "qdq"
+      },
+      {
+        "dataset": "csdn",
+        "username": "kkk321",
+        "password": "123kkk"
+      },
+      {
+        "dataset": "csdn",
+        "username": "corin",
+        "password": "niroc"
+      },
+      {
+        "dataset": "csdn",
+        "username": "yiyayiyaoooooo",
+        "password": "ooooooayiyayiy"
+      }
+    ],
+    "leet_substitution": [
+      {
+        "dataset": "csdn",
+        "username": "rhr",
+        "password": "rhr"
+      },
+      {
+        "dataset": "csdn",
+        "username": "l",
+        "password": "1"
+      },
+      {
+        "dataset": "csdn",
+        "username": "zbk",
+        "password": "zbk"
+      },
+      {
+        "dataset": "csdn",
+        "username": "zhjjj",
+        "password": "zhjjj"
+      },
+      {
+        "dataset": "csdn",
+        "username": "xrb",
+        "password": "xrb"
+      }
+    ],
+    "prefix_digits": [
+      {
+        "dataset": "csdn",
+        "username": "4687",
+        "password": "46874687"
+      },
+      {
+        "dataset": "csdn",
+        "username": "ywpg",
+        "password": "401ywpg"
+      },
+      {
+        "dataset": "csdn",
+        "username": "xulj",
+        "password": "3092XULJ"
+      },
+      {
+        "dataset": "csdn",
+        "username": "supertrue",
+        "password": "2599886supertrue"
+      },
+      {
+        "dataset": "csdn",
+        "username": "ERWANG",
+        "password": "2009ERWANG"
+      }
+    ],
+    "wrap_username": [
+      {
+        "dataset": "csdn",
+        "username": "qiyanji",
+        "password": "qiyanji qiyanji"
+      },
+      {
+        "dataset": "csdn",
+        "username": "ouk",
+        "password": "ouk.cn.ouk"
+      },
+      {
+        "dataset": "csdn",
+        "username": "wwvvuu",
+        "password": "WWVVUU_WWVVUU"
+      },
+      {
+        "dataset": "csdn",
+        "username": "wsxrm",
+        "password": "wsxrmnwsxrm"
+      },
+      {
+        "dataset": "csdn",
+        "username": "JNLYWM",
+        "password": "JNLYWM@JNLYWM"
+      }
+    ]
+  },
+  "total_pairs": 6870606
+}
