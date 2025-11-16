@@ -1,6 +1,4 @@
-# 用户名-口令与 PCFG 代码级改动说明（按文件）
-
-本说明以文件为颗粒度，记录从 commit `18619d82` 之后我在“用户名-口令关系分析”和 PCFG 集成上的具体代码修改及含义，便于同学或老师从源码角度理解我的贡献。
+# 用户名-口令与 PCFG 代码级改动说明
 
 ---
 
@@ -229,4 +227,37 @@
 - 在 **pcfg_advance/test.py** 中调整了数据与结果的路径，使得整个流水线（生成 + 测试）可以在不同工作目录下稳定运行，便于对比“启用与关闭用户名 token”方案的效果。
 
 这些改动总体上把“用户名-口令统计分析”与原始 PCFG 生成流程打通，使得 PCFG 不再只依赖密码本身的统计模式，还能够在一定程度上利用用户名信息来提升密码猜测的效率（尤其是在 CSDN 这类用户名与口令关系较强的数据集上）。
+
+
+---
+
+## 附录：与用户名-口令/PCFG 相关的新增与修改文件一览
+
+**新增文件（分析脚本、结果与说明）**
+- `analysis/username_overlap.py`
+- `analysis/username_pattern_corr.py`
+- `analysis/username_transform_rules.py`
+- `analysis/results/username_overlap.csv`
+- `analysis/results/username_overlap.html`
+- `analysis/results/username_overlap_csdn.csv`
+- `analysis/results/username_overlap_csdn.html`
+- `analysis/results/username_overlap_pie.html`
+- `analysis/results/username_overlap_yahoo.csv`
+- `analysis/results/username_overlap_yahoo.html`
+- `analysis/results/username_pattern_matrix.csv`
+- `analysis/results/username_pwd_length_corr.png`
+- `analysis/results/username_transform_heatmap.png`
+- `analysis/results/username_transform_stats.json`
+- `pcfg_advance/lib/username_tokens.txt`
+- `pcfg_advance/lib/username_tokens_csdn.txt`
+- `pcfg_advance/lib/username_tokens_yahoo.txt`
+- `username_pwd_report.md`
+- `username_pwd_code_notes.md`
+
+**修改文件（对原有 PCFG 流水线的改动）**
+- `DataPreprocessing.py`：调整原始数据路径与默认执行函数，为用户名-口令分析提供统一输入。
+- `pcfg_advance/pcfg.advance.py`：引入用户名 token 加载与组合逻辑，增加环境变量控制和输出路径标准化。
+- `pcfg_advance/test.py`：标准化数据与结果路径，支持在不同工作目录下稳定评测 PCFG。
+- `pcfg_advance/info.txt`、`pcfg_advance/res.txt`：测试运行过程中持续追加的结果记录文件。
+- `.gitignore`：根据需要更新忽略规则（与功能逻辑关系较小）。
 
