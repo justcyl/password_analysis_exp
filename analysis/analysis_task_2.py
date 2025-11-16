@@ -179,8 +179,8 @@ def components_analysis(passwords):
 
 if __name__ == '__main__':
     passwords = init_data()
-    # csdn = open(r'./mid/csdn_date_result.pkl', 'wb')
-    # yahoo = open(r'./mid/yahoo_date_result.pkl', 'wb')
+    # csdn = open(r'./mid/data_csdn.pkl', 'wb')
+    # yahoo = open(r'./mid/data_yahoo.pkl', 'wb')
     # F = open(r'data_csdn.pkl', 'rb')
     # E = open(r'data_yahoo.pkl', 'rb')
     # passwords_csdn = pickle.load(F)

@@ -1,1 +1,82 @@
-<!doctype html><html><head><meta charset='utf-8'><title>用户名子串复用占比</title><style>body{font-family:Arial;padding:1.5rem;}table{border-collapse:collapse;}th,td{border:1px solid #ccc;padding:0.4rem 0.8rem;}th{background:#f0f0f0;}</style></head><body><h1>用户名子串复用 Top-10（all）</h1><p>总样本数：6870606</p><table><tr><th>排名</th><th>子串</th><th>命中次数</th><th>占比（%）</th></tr><tr><td>1</td><td>a</td><td>25990</td><td>25.83</td></tr><tr><td>2</td><td>qq</td><td>25232</td><td>25.08</td></tr><tr><td>3</td><td>123</td><td>13451</td><td>13.37</td></tr><tr><td>4</td><td>com</td><td>9391</td><td>9.33</td></tr><tr><td>5</td><td>q</td><td>5320</td><td>5.29</td></tr><tr><td>6</td><td>2010</td><td>4706</td><td>4.68</td></tr><tr><td>7</td><td>520</td><td>4625</td><td>4.60</td></tr><tr><td>8</td><td>w</td><td>4150</td><td>4.12</td></tr><tr><td>9</td><td>z</td><td>4104</td><td>4.08</td></tr><tr><td>10</td><td>123456</td><td>3649</td><td>3.63</td></tr></table><h2>总体覆盖率</h2><ul><li>大小写不敏感子串复用：18.21% (1251049/6870606)</li><li>Levenshtein≤1 复用：2.37% (163089/6870606)</li></ul></body></html>
+<!doctype html><html><head><meta charset='utf-8'><title>用户名子串复用分析报告</title><script src='https://cdn.jsdelivr.net/npm/echarts@5.3.3/dist/echarts.min.js'></script><style>body{font-family:Arial;padding:1.5rem;display:flex;flex-direction:column;align-items:center;}h1, h2 {color:#333; margin-bottom: 1rem;}table{border-collapse:collapse;margin-bottom:2rem;width:80%;max-width:800px;}th,td{border:1px solid #ccc;padding:0.6rem 1rem;text-align:left;}th{background:#f0f0f0;font-weight:bold;}.chart-container {width: 90%; max-width: 800px; height: 400px; margin-bottom: 2rem; border: 1px solid #eee; box-shadow: 0 2px 10px rgba(0,0,0,0.05);}ul {list-style-type: none; padding: 0; width: 80%; max-width: 800px; margin-bottom: 2rem;}li {background: #f9f9f9; border: 1px solid #ddd; padding: 0.8rem; margin-bottom: 0.5rem; border-radius: 4px;}</style></head><body><h1>用户名子串复用分析报告（all）</h1><p>总样本数：6870371</p><h2>Top-10 共享子串占比</h2><div id='topTokensPieChart' class='chart-container'></div><table><tr><th>排名</th><th>子串</th><th>加权计数</th><th>Top-10 内部占比（%）</th></tr><tr><td>1</td><td>qq</td><td>32965.00</td><td>26.40</td></tr><tr><td>2</td><td>a</td><td>28718.00</td><td>23.00</td></tr><tr><td>3</td><td>123</td><td>14052.50</td><td>11.25</td></tr><tr><td>4</td><td>163</td><td>11065.00</td><td>8.86</td></tr><tr><td>5</td><td>com</td><td>10773.00</td><td>8.63</td></tr><tr><td>6</td><td>q</td><td>6482.00</td><td>5.19</td></tr><tr><td>7</td><td>126</td><td>6017.50</td><td>4.82</td></tr><tr><td>8</td><td>w</td><td>5104.50</td><td>4.09</td></tr><tr><td>9</td><td>z</td><td>4955.00</td><td>3.97</td></tr><tr><td>10</td><td>2010</td><td>4752.00</td><td>3.81</td></tr></table><h2>复用类型覆盖率</h2><div id='reuseTypeBarChart' class='chart-container'></div><ul><li><strong>精确匹配:</strong> 17.62% (1210848/6870371)</li><li><strong>大小写不敏感匹配:</strong> 18.21% (1251039/6870371)</li><li><strong>Levenshtein≤1 匹配:</strong> 2.37% (163099/6870371)</li></ul><script type='text/javascript'>var topTokensPieChart = echarts.init(document.getElementById('topTokensPieChart'));var tokenCategories = ["qq", "a", "123", "163", "com", "q", "126", "w", "z", "2010"];var tokenSeriesData = [{"name": "qq", "value": 32965.0}, {"name": "a", "value": 28718.0}, {"name": "123", "value": 14052.5}, {"name": "163", "value": 11065.0}, {"name": "com", "value": 10773.0}, {"name": "q", "value": 6482.0}, {"name": "126", "value": 6017.5}, {"name": "w", "value": 5104.5}, {"name": "z", "value": 4955.0}, {"name": "2010", "value": 4752.0}];
+        var topTokensOption = {
+            tooltip: {
+                trigger: 'item',
+                formatter: '{a} <br/>{b}: {c} ({d}%)'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: tokenCategories
+            },
+            series: [
+                {
+                    name: '子串加权计数',
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '20',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: tokenSeriesData
+                }
+            ]
+        };
+        topTokensPieChart.setOption(topTokensOption);
+        var reuseTypeBarChart = echarts.init(document.getElementById('reuseTypeBarChart'));var chart2Categories = ["\u7cbe\u786e\u5339\u914d", "\u5927\u5c0f\u5199\u4e0d\u654f\u611f\u5339\u914d", "Levenshtein\u22641 \u5339\u914d"];var chart2Data = [{"name": "\u7cbe\u786e\u5339\u914d", "value": 17.62}, {"name": "\u5927\u5c0f\u5199\u4e0d\u654f\u611f\u5339\u914d", "value": 18.21}, {"name": "Levenshtein\u22641 \u5339\u914d", "value": 2.37}];
+        var reuseTypeOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+                formatter: '{b}: {c}%'
+            },
+            xAxis: {
+                type: 'category',
+                data: chart2Categories,
+                axisLabel: {
+                    rotate: 30 // 稍微旋转标签以防止重叠
+                }
+            },
+            yAxis: {
+                type: 'value',
+                name: '覆盖率 (%)',
+                axisLabel: {
+                    formatter: '{value} %'
+                }
+            },
+            series: [{
+                name: '覆盖率',
+                type: 'bar',
+                data: chart2Data.map(item => item.value), // 只传递数值
+                itemStyle: {
+                    color: new echarts.graphic.LinearGradient(
+                        0, 0, 0, 1,
+                        [
+                            {offset: 0, color: '#83bff6'},
+                            {offset: 0.5, color: '#188df0'},
+                            {offset: 1, color: '#182bcf'}
+                        ]
+                    )
+                },
+                label: {
+                    show: true,
+                    position: 'top',
+                    formatter: '{c}%'
+                }
+            }]
+        };
+        reuseTypeBarChart.setOption(reuseTypeOption);
+        </script></body></html>

@@ -7,7 +7,7 @@ from pypinyin import lazy_pinyin
 
 def word_dataset_processing():
     # 处理雅虎数据集
-    yahoo_dir = './raw_data/plaintxt_yahoo.txt'
+    yahoo_dir = './raw_data/yahoo.txt'
     with open(yahoo_dir, 'r', encoding='unicode_escape') as f:
         lines = f.readlines()
         header = lines[3070]
