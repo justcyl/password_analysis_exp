@@ -207,3 +207,9 @@ Tips：有些密码中包含又分割符，因此采用了多层拼接模式以�
 2、文件加载后即可执行 generate() 函数，他将以列表的形式返回所有生成的口令
 
 3、选择前 N 个将生成的口令写入到本地文件 `./*_genpwds.txt`
+
+## 0x08. 用户名-口令关联分析
+
+- `username_pwd_report.md` 汇总了用户名-口令关联的统计结果与所有代码级改动（数据预处理、三个分析脚本以及 PCFG 流水线调整），建议在调试前先阅读该报告获取整体背景与关键指标。
+- 执行 `uv run python analysis/username_overlap.py --dataset <dataset>`、`uv run python analysis/username_transform_rules.py`、`uv run python analysis/username_pattern_corr.py` 可重建共享子串、确定性变换与长度耦合的中间结果（输出至 `mid/analysis/...`，图表位于 `analysis/report_assets/...`）。
+- PCFG 端可以通过环境变量 `PCFG_DATASET`、`ENABLE_USERNAME_TOKENS`、`USERNAME_TOKEN_FILE` 控制是否加载 `mid/pcfg_advance/lib/username_tokens_<dataset>.txt`，并在 `pcfg_advance/test.py` 中用统一路径评估撞库效果；A/B 测试流程与命中率示例详见报告的 “PCFG 用户名 Token A/B 测试” 章节。
