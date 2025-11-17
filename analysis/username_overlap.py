@@ -34,6 +34,7 @@ plt.rcParams["axes.unicode_minus"] = False
 CSV_OUTPUT_DIR = analysis_mid_dir("username_overlap")
 TOKEN_OUTPUT_DIR = pcfg_mid_dir("lib")
 CHART_OUTPUT_DIR = report_assets_dir("username_overlap")
+CHART_MID_DIR = analysis_mid_dir("username_overlap_charts")
 
 TOKEN_PATTERN = re.compile(r"[A-Za-z]+|\d{2,}|[A-Za-z]\d+|\d+[A-Za-z]+")
 
@@ -204,6 +205,10 @@ def write_csv(dataset: str, counts: Counter, token_counter: Counter) -> Path:
     return csv_path
 
 
+def _chart_dir(dataset: str) -> Path:
+    return CHART_MID_DIR if dataset == "all" else CHART_OUTPUT_DIR
+
+
 def write_figures(dataset: str, counts: Counter, token_counter: Counter) -> Tuple[Path, Path]:
     suffix = "" if dataset == "all" else f"_{dataset}"
     top_tokens = token_counter.most_common(10)
@@ -223,7 +228,8 @@ def write_figures(dataset: str, counts: Counter, token_counter: Counter) -> Tupl
         counterclock=False,
     )
     ax_pie.set_title(f"用户名子串复用 Top-10（{dataset}）")
-    pie_path = CHART_OUTPUT_DIR / f"username_overlap{suffix}_pie.png"
+    output_dir = _chart_dir(dataset)
+    pie_path = output_dir / f"username_overlap{suffix}_pie.png"
     fig_pie.tight_layout()
     fig_pie.savefig(pie_path, dpi=200)
     plt.close(fig_pie)
@@ -237,7 +243,7 @@ def write_figures(dataset: str, counts: Counter, token_counter: Counter) -> Tupl
     ax_bar.set_ylabel("占比（%）")
     ax_bar.set_title(f"用户名子串复用 Top-10（{dataset}）")
     ax_bar.grid(True, axis="y", linestyle="--", alpha=0.4)
-    bar_path = CHART_OUTPUT_DIR / f"username_overlap{suffix}_bar.png"
+    bar_path = output_dir / f"username_overlap{suffix}_bar.png"
     fig_bar.tight_layout()
     fig_bar.savefig(bar_path, dpi=200)
     plt.close(fig_bar)

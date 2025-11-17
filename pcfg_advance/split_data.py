@@ -27,7 +27,7 @@ def init_data():
 
     print("Total Count =", TOTAL_COUNT)
 
-    if("csdn" in FILE_PATH):
+    if FILE_NAME.lower() == "csdn":
         passwords = ['#'.join(line.split('#')[1:-1]).strip()
                      for line in lines]
     else:
@@ -67,7 +67,7 @@ def _split_data(data, count=50000):
 def filter_split_data(passwords):
     # 构成模式
     data_save_path = DATA_DIR / f'data_{FILE_NAME}.pkl'
-    if not os.path.exists(data_save_path):
+    if not data_save_path.exists():
         filtered_data = _filter_data(passwords)
         train_data, test_data = _split_data(filtered_data)
         with open(data_save_path, 'wb') as f:
