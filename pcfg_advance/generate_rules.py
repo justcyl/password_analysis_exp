@@ -2,23 +2,22 @@ import pickle
 from progress.bar import Bar
 import os
 import re
-import sys
 from pathlib import Path
 import numpy as np
 from utils import load_data
 import string
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))
-
-from project_paths import DATA_DIR, pcfg_mid_dir
+DATA_DIR = ROOT / "data"
+PCFG_MID_DIR = ROOT / "mid" / "pcfg_advance"
+PCFG_MID_DIR.mkdir(parents=True, exist_ok=True)
 
 FILE_NAME = 'yahoo'
 # FILE_NAME = 'csdn'
 FILE_PATH = DATA_DIR / f"data_{FILE_NAME}.pkl"
 TOTAL_COUNT = None
-OUTPUT_DIR = pcfg_mid_dir(FILE_NAME)
+OUTPUT_DIR = PCFG_MID_DIR / FILE_NAME
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 def generate_char_rule(passwords):
     char_rule = {}

@@ -2,17 +2,16 @@ from tqdm import tqdm
 import itertools
 import gc
 import os
-import sys
 from pathlib import Path
 
 from test import test
 from generate_rules import FILE_NAME as RULE_FILE_NAME
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))
-
-from project_paths import DATA_DIR, PCFG_LIB_DIR, pcfg_mid_dir
+DATA_DIR = ROOT / "data"
+PCFG_LIB_DIR = ROOT / "pcfg_advance" / "lib"
+PCFG_MID_DIR = ROOT / "mid" / "pcfg_advance"
+PCFG_MID_DIR.mkdir(parents=True, exist_ok=True)
 
 # Default dataset follows generate_rules unless overridden via env
 FILE_NAME = RULE_FILE_NAME if RULE_FILE_NAME else 'csdn'
@@ -21,9 +20,11 @@ if env_filename:
     FILE_NAME = env_filename.lower()
 FILE_PATH = DATA_DIR / f"data_{FILE_NAME}.pkl"
 BASE_DIR = Path(__file__).resolve().parent
-MID_OUTPUT_DIR = pcfg_mid_dir()
-RULE_DIR = pcfg_mid_dir(FILE_NAME)
-USERNAME_TOKEN_DIR = pcfg_mid_dir("lib")
+MID_OUTPUT_DIR = PCFG_MID_DIR
+RULE_DIR = PCFG_MID_DIR / FILE_NAME
+RULE_DIR.mkdir(parents=True, exist_ok=True)
+USERNAME_TOKEN_DIR = PCFG_MID_DIR / "lib"
+USERNAME_TOKEN_DIR.mkdir(parents=True, exist_ok=True)
 RES_PATH = MID_OUTPUT_DIR / "res.txt"
 INFO_PATH = MID_OUTPUT_DIR / "info.txt"
 GENPWD_PATH = MID_OUTPUT_DIR / f"{FILE_NAME}_genpwds.txt"

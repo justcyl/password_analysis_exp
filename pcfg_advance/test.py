@@ -1,20 +1,17 @@
 import os
 import pickle
-import sys
 from pathlib import Path
 from progress.bar import Bar
 from utils import load_data
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))
-
-from project_paths import DATA_DIR, pcfg_mid_dir
+DATA_DIR = ROOT / "data"
+PCFG_MID_DIR = ROOT / "mid" / "pcfg_advance"
+PCFG_MID_DIR.mkdir(parents=True, exist_ok=True)
 
 FILE_NAME = 'yahoo'
 # FILE_NAME = 'csdn'
-BASE_DIR = Path(__file__).resolve().parent
-MID_DIR = pcfg_mid_dir()
+MID_DIR = PCFG_MID_DIR
 
 
 def test(file_name):

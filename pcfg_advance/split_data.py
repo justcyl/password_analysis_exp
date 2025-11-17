@@ -2,15 +2,11 @@ import pickle
 from progress.bar import Bar
 import os
 import re
-import sys
 from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))
-
-from project_paths import DATA_DIR
+DATA_DIR = ROOT / "data"
 
 FILE_NAME = 'yahoo'
 # FILE_NAME = 'csdn'
