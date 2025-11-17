@@ -28,7 +28,7 @@ if str(ROOT) not in sys.path:
 
 from project_paths import DATA_DIR, analysis_mid_dir, pcfg_mid_dir, report_assets_dir
 
-plt.rcParams["font.sans-serif"] = ["SimHei"]
+plt.rcParams["font.sans-serif"] = ["Arial Unicode MS"]
 plt.rcParams["axes.unicode_minus"] = False
 
 CSV_OUTPUT_DIR = analysis_mid_dir("username_overlap")
