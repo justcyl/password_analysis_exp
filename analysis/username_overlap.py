@@ -4,7 +4,7 @@
 
 输出（按数据集命名）：
 1. analysis/results/username_overlap_<dataset>.csv - 子串出现次数与覆盖率
-2. analysis/results/username_overlap_<dataset>.html - Top-N 共享子串占比
+2. analysis/results/username_overlap_<dataset>_{pie,bar}.png - Top-N 共享子串占比
 3. pcfg_advance/lib/username_tokens_<dataset>.txt - PCFG 可直接引用的 token 概率表
 """
 
@@ -12,12 +12,17 @@ from __future__ import annotations
 
 import argparse
 import csv
-import html
 import re
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+plt.rcParams["font.sans-serif"] = ["SimHei"]
+plt.rcParams["axes.unicode_minus"] = False
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
@@ -195,53 +200,45 @@ def write_csv(dataset: str, counts: Counter, token_counter: Counter) -> Path:
     return csv_path
 
 
-def write_html(dataset: str, counts: Counter, token_counter: Counter) -> Path:
+def write_figures(dataset: str, counts: Counter, token_counter: Counter) -> Tuple[Path, Path]:
     suffix = "" if dataset == "all" else f"_{dataset}"
-    html_path = RESULTS_DIR / f"username_overlap{suffix}.html"
     top_tokens = token_counter.most_common(10)
-    total_top = sum(cnt for _, cnt in top_tokens)
-    pie_segments = [
-        {
-            "label": token,
-            "value": cnt,
-            "percent": f"{(cnt / total_top * 100):.2f}" if total_top else "0.00",
-        }
-        for token, cnt in top_tokens
-    ]
 
-    with html_path.open("w", encoding="utf-8") as fh:
-        fh.write("<!doctype html><html><head><meta charset='utf-8'><title>用户名子串复用占比</title>")
-        fh.write("<style>body{font-family:Arial;padding:1.5rem;}table{border-collapse:collapse;}th,td{border:1px solid #ccc;padding:0.4rem 0.8rem;}th{background:#f0f0f0;}</style>")
-        fh.write("</head><body>")
-        fh.write(f"<h1>用户名子串复用 Top-10（{html.escape(dataset)}）</h1>")
-        fh.write("<p>总样本数：{}</p>".format(counts["pairs_total"]))
-        fh.write("<table><tr><th>排名</th><th>子串</th><th>命中次数</th><th>占比（%）</th></tr>")
-        for idx, seg in enumerate(pie_segments, start=1):
-            fh.write(
-                "<tr><td>{}</td><td>{}</td><td>{}</td><td>{}</td></tr>".format(
-                    idx, html.escape(seg["label"]), seg["value"], seg["percent"]
-                )
-            )
-        fh.write("</table>")
-        fh.write("<h2>总体覆盖率</h2>")
-        fh.write("<ul>")
-        fh.write(
-            "<li>大小写不敏感子串复用：{:.2f}% ({}/{})</li>".format(
-                counts["lower_match"] / counts["pairs_total"] * 100 if counts["pairs_total"] else 0,
-                counts["lower_match"],
-                counts["pairs_total"],
-            )
-        )
-        fh.write(
-            "<li>Levenshtein≤1 复用：{:.2f}% ({}/{})</li>".format(
-                counts["lev1_match"] / counts["pairs_total"] * 100 if counts["pairs_total"] else 0,
-                counts["lev1_match"],
-                counts["pairs_total"],
-            )
-        )
-        fh.write("</ul>")
-        fh.write("</body></html>")
-    return html_path
+    labels = [t for t, _ in top_tokens]
+    values = [cnt for _, cnt in top_tokens]
+    total_top = sum(values) or 1
+    percents = [v / total_top * 100 for v in values]
+
+    # 饼状图
+    fig_pie, ax_pie = plt.subplots(figsize=(6, 6))
+    ax_pie.pie(
+        percents,
+        labels=labels,
+        autopct="%.1f%%",
+        startangle=90,
+        counterclock=False,
+    )
+    ax_pie.set_title(f"用户名子串复用 Top-10（{dataset}）")
+    pie_path = RESULTS_DIR / f"username_overlap{suffix}_pie.png"
+    fig_pie.tight_layout()
+    fig_pie.savefig(pie_path, dpi=200)
+    plt.close(fig_pie)
+
+    # 条形图
+    fig_bar, ax_bar = plt.subplots(figsize=(8, 5))
+    x_pos = range(len(labels))
+    ax_bar.bar(x_pos, percents, color="#1f77b4")
+    ax_bar.set_xticks(list(x_pos))
+    ax_bar.set_xticklabels(labels, rotation=30, ha="right")
+    ax_bar.set_ylabel("占比（%）")
+    ax_bar.set_title(f"用户名子串复用 Top-10（{dataset}）")
+    ax_bar.grid(True, axis="y", linestyle="--", alpha=0.4)
+    bar_path = RESULTS_DIR / f"username_overlap{suffix}_bar.png"
+    fig_bar.tight_layout()
+    fig_bar.savefig(bar_path, dpi=200)
+    plt.close(fig_bar)
+
+    return pie_path, bar_path
 
 
 def write_token_file(
@@ -334,7 +331,7 @@ def main() -> None:
             print(f"[WARN] 数据集 {dataset} 无有效样本，跳过。")
             continue
         write_csv(dataset, counts, token_counter)
-        write_html(dataset, counts, token_counter)
+        write_figures(dataset, counts, token_counter)
         write_token_file(dataset, counts, token_counter, args.coverage_threshold, args.max_token_count)
         print_summary(dataset, counts)
         processed = True

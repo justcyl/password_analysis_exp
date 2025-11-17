@@ -44,16 +44,16 @@
   - 用 `counts` 统计样本总数及三种复用形式的命中次数；
   - 用 `token_counter` 聚合所有共享 token，为后续生成频率表和 PCFG 词表提供依据。
 - `analysis/username_overlap.py:185-195`：`write_csv(dataset, counts, token_counter)` 输出 `analysis/results/username_overlap_<dataset>.csv`，记录 token 频数和覆盖率。
-- `analysis/username_overlap.py:198-244`：`write_html(dataset, ...)` 输出 HTML 报告 `analysis/results/username_overlap_<dataset>.html`，展示 Top-10 共享 token 及其覆盖情况。
+- `analysis/username_overlap.py:198-244`：`write_figures(dataset, ...)` 使用 `matplotlib`（配合 `SimHei` 字体配置）生成饼状图与条形图，输出 `analysis/results/username_overlap_<dataset>_pie.png`、`analysis/results/username_overlap_<dataset>_bar.png` 两类可视化。
 - `analysis/username_overlap.py:247-275`：`write_token_file(dataset, ...)` 核心：
   - 根据覆盖率阈值和最大 token 数选出高频用户名 token；
   - 按相对频率归一化为概率；
   - 写入 `pcfg_advance/lib/username_tokens_<dataset>.txt`（例如 `username_tokens_csdn.txt`、`username_tokens_yahoo.txt`）。
 
 **新增文件：**
-- `analysis/results/username_overlap_csdn.csv` / `.html`
-- `analysis/results/username_overlap_yahoo.csv` / `.html`
-- `analysis/results/username_overlap.csv` / `.html`（全部样本汇总）
+- `analysis/results/username_overlap_csdn.csv` / `username_overlap_csdn_pie.png` / `username_overlap_csdn_bar.png`
+- `analysis/results/username_overlap_yahoo.csv` / `username_overlap_yahoo_pie.png` / `username_overlap_yahoo_bar.png`
+- `analysis/results/username_overlap.csv`（全部样本汇总）
 - `pcfg_advance/lib/username_tokens_csdn.txt`
 - `pcfg_advance/lib/username_tokens_yahoo.txt`
 - `pcfg_advance/lib/username_tokens.txt`（汇总或兜底版）
@@ -226,7 +226,20 @@
   - 标准化了生成结果的输出路径，与测试脚本对齐。
 - 在 **pcfg_advance/test.py** 中调整了数据与结果的路径，使得整个流水线（生成 + 测试）可以在不同工作目录下稳定运行，便于对比“启用与关闭用户名 token”方案的效果。
 
-这些改动总体上把“用户名-口令统计分析”与原始 PCFG 生成流程打通，使得 PCFG 不再只依赖密码本身的统计模式，还能够在一定程度上利用用户名信息来提升密码猜测的效率（尤其是在 CSDN 这类用户名与口令关系较强的数据集上）。
+这些改动总体上把“用户名-口令统计分析”与原始 PCFG 生成流程打通，并在下方给出了基于 uv 生成的图片可视化示例。
+
+### 可视化示例
+
+- CSDN 用户名-口令共享子串饼图：
+  ![用户名-口令共享子串饼图（CSDN）](analysis/results/username_overlap_csdn_pie.png)
+- CSDN 用户名-口令共享子串条形图：
+  ![用户名-口令共享子串条形图（CSDN）](analysis/results/username_overlap_csdn_bar.png)
+- Yahoo 用户名-口令共享子串饼图：
+  ![用户名-口令共享子串饼图（Yahoo）](analysis/results/username_overlap_yahoo_pie.png)
+- Yahoo 用户名-口令共享子串条形图：
+  ![用户名-口令共享子串条形图（Yahoo）](analysis/results/username_overlap_yahoo_bar.png)
+
+这些可视化说明 PCFG 不再只依赖密码本身的统计模式，还能够在一定程度上利用用户名信息来提升密码猜测的效率（尤其是在 CSDN 这类用户名与口令关系较强的数据集上）。
 
 
 ---
@@ -238,12 +251,14 @@
 - `analysis/username_pattern_corr.py`
 - `analysis/username_transform_rules.py`
 - `analysis/results/username_overlap.csv`
-- `analysis/results/username_overlap.html`
+- `analysis/results/username_overlap_pie.png`
+- `analysis/results/username_overlap_bar.png`
 - `analysis/results/username_overlap_csdn.csv`
-- `analysis/results/username_overlap_csdn.html`
-- `analysis/results/username_overlap_pie.html`
+- `analysis/results/username_overlap_csdn_pie.png`
+- `analysis/results/username_overlap_csdn_bar.png`
 - `analysis/results/username_overlap_yahoo.csv`
-- `analysis/results/username_overlap_yahoo.html`
+- `analysis/results/username_overlap_yahoo_pie.png`
+- `analysis/results/username_overlap_yahoo_bar.png`
 - `analysis/results/username_pattern_matrix.csv`
 - `analysis/results/username_pwd_length_corr.png`
 - `analysis/results/username_transform_heatmap.png`
@@ -260,4 +275,3 @@
 - `pcfg_advance/test.py`：标准化数据与结果路径，支持在不同工作目录下稳定评测 PCFG。
 - `pcfg_advance/info.txt`、`pcfg_advance/res.txt`：测试运行过程中持续追加的结果记录文件。
 - `.gitignore`：根据需要更新忽略规则（与功能逻辑关系较小）。
-

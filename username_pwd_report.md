@@ -4,11 +4,11 @@
 - 数据源：`data/csdn.txt` 与 `data/yahoo.txt`。两份文件分别以 `username # password # email`（CSDN）与 `id:email:password`（Yahoo）格式保存。
 - 实现脚本：新增 `analysis/username_overlap.py`、`analysis/username_transform_rules.py`、`analysis/username_pattern_corr.py`，运行命令均使用 `uv run python ...`，结果写入 `analysis/results/`。
 - 有效样本：解析后得到 CSDN 6,427,769 条、Yahoo 442,837 条（原 `data/yahoo.txt` 共 453,492 行，因缺少口令或字段的 10,655 行被过滤），也解释了旧脚本只处理 1,003 条 Yahoo 数据的原因。（因为用了处理 csdn 的逻辑处理了 yahoo）
-- 用户名 token 生成：执行 `uv run python analysis/username_overlap.py --dataset csdn --dataset yahoo --dataset all`，脚本会为每个数据集分别输出 `analysis/results/username_overlap_<dataset>.csv/.html` 以及 `pcfg_advance/lib/username_tokens_<dataset>.txt`，同时刷新汇总文件 `username_overlap.csv/html` 与 `username_tokens.txt` 供 PCFG 兜底使用。
+- 用户名 token 生成：执行 `uv run python analysis/username_overlap.py --dataset csdn --dataset yahoo --dataset all`，脚本会为每个数据集分别输出 `analysis/results/username_overlap_<dataset>.csv`、`analysis/results/username_overlap_<dataset>_pie.png`、`analysis/results/username_overlap_<dataset>_bar.png` 以及 `pcfg_advance/lib/username_tokens_<dataset>.txt`，同时生成汇总文件 `username_overlap.csv` 与 `username_tokens.txt` 供 PCFG 兜底使用。
 
 ## 共享子串与词汇复用分析
-- 方法：拆分用户名、本地邮箱段与域名，与口令一起做 token 化（精确匹配/大小写无关/Levenshtein≤1），分别输出 `analysis/results/username_overlap_<dataset>.csv/.html`（若 `dataset=all` 则与旧版同名）。
-- 可视化：详见 `analysis/results/username_overlap_csdn.html` 与 `analysis/results/username_overlap_yahoo.html`。
+- 方法：拆分用户名、本地邮箱段与域名，与口令一起做 token 化（精确匹配/大小写无关/Levenshtein≤1），分别输出 `analysis/results/username_overlap_<dataset>.csv`（若 `dataset=all` 则与旧版同名）。
+- 可视化：详见 `analysis/results/username_overlap_csdn_{pie,bar}.png` 与 `analysis/results/username_overlap_yahoo_{pie,bar}.png`。
 - 结果：整体 18.21% 的样本在密码中复用了用户名 token（CSDN 19.23%，Yahoo 3.37%）；Levenshtein≤1 覆盖率为 2.37%。Top-10 共享 token（`analysis/results/username_overlap_csdn.csv:2-11`）仍以 `a`、`qq`、`123`、`com`、`520` 等邮箱片段与顺序数字为主，Yahoo 的榜单（`analysis/results/username_overlap_yahoo.csv:2-11`）则明显偏向 2 位数字的年份/序号。
 - 落地：脚本会自动将满足阈值的 token 写入 `pcfg_advance/lib/username_tokens_<dataset>.txt` 并做概率归一化，PCFG 运行时会优先加载 `lib/username_tokens_{PCFG_DATASET}.txt`，若缺失则回退到 `lib/username_tokens.txt` 或通过 `USERNAME_TOKEN_FILE` 环境变量显式覆盖。
 
