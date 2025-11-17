@@ -10,7 +10,6 @@
 from __future__ import annotations
 
 import json
-import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
@@ -19,14 +18,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))
-
-from project_paths import DATA_DIR, analysis_mid_dir, report_assets_dir
+DATA_DIR = ROOT / "data"
+ANALYSIS_MID_DIR = ROOT / "mid" / "analysis"
+REPORT_ASSETS_DIR = ROOT / "analysis" / "report_assets"
 plt.rcParams["font.sans-serif"] = ["Arial Unicode MS"]
 
-STATS_OUTPUT_DIR = analysis_mid_dir("username_transform")
-HEATMAP_OUTPUT_DIR = report_assets_dir("username_transform")
+STATS_OUTPUT_DIR = ANALYSIS_MID_DIR / "username_transform"
+HEATMAP_OUTPUT_DIR = REPORT_ASSETS_DIR / "username_transform"
+STATS_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+HEATMAP_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 SOURCES = [
     ("csdn", DATA_DIR / "csdn.txt"),

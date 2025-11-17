@@ -1,21 +1,18 @@
 from math import log
 import re
 import pickle
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))
-
-from project_paths import DATA_DIR, analysis_mid_dir
+DATA_DIR = ROOT / "data"
+OUTPUT_DIR = ROOT / "mid" / "analysis" / "analysis_task_3"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 
 # FILE_NAME = 'yahoo'
 FILE_NAME = 'csdn'
 FILE_PATH = DATA_DIR / f"{FILE_NAME}.txt" # 453491
 TOTAL_COUNT = None
-OUTPUT_DIR = analysis_mid_dir("analysis_task_3")
 
 
 def init_data():

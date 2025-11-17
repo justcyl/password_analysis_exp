@@ -1,18 +1,15 @@
 import pickle
 import re
-import sys
 from math import log
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))
-
-from project_paths import DATA_DIR, analysis_mid_dir
+DATA_DIR = ROOT / "data"
+OUTPUT_DIR = ROOT / "mid" / "analysis" / "task_5"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 FILE_NAME = 'csdn'
 # FILE_NAME = 'yahoo'
-OUTPUT_DIR = analysis_mid_dir("task_5")
 
 lib_path = './lib/word_lib.txt'
 # Build a cost dictionary, assuming Zipf's law and cost = -math.log(probability).

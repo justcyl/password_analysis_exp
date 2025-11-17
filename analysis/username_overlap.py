@@ -13,7 +13,6 @@ from __future__ import annotations
 import argparse
 import csv
 import re
-import sys
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -23,18 +22,20 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))
-
-from project_paths import DATA_DIR, analysis_mid_dir, pcfg_mid_dir, report_assets_dir
+DATA_DIR = ROOT / "data"
+ANALYSIS_MID_DIR = ROOT / "mid" / "analysis"
+PCFG_MID_DIR = ROOT / "mid" / "pcfg_advance"
+REPORT_ASSETS_DIR = ROOT / "analysis" / "report_assets"
 
 plt.rcParams["font.sans-serif"] = ["Arial Unicode MS"]
 plt.rcParams["axes.unicode_minus"] = False
 
-CSV_OUTPUT_DIR = analysis_mid_dir("username_overlap")
-TOKEN_OUTPUT_DIR = pcfg_mid_dir("lib")
-CHART_OUTPUT_DIR = report_assets_dir("username_overlap")
-CHART_MID_DIR = analysis_mid_dir("username_overlap_charts")
+CSV_OUTPUT_DIR = ANALYSIS_MID_DIR / "username_overlap"
+TOKEN_OUTPUT_DIR = PCFG_MID_DIR / "lib"
+CHART_OUTPUT_DIR = REPORT_ASSETS_DIR / "username_overlap"
+CHART_MID_DIR = ANALYSIS_MID_DIR / "username_overlap_charts"
+for path in (CSV_OUTPUT_DIR, TOKEN_OUTPUT_DIR, CHART_OUTPUT_DIR, CHART_MID_DIR):
+    path.mkdir(parents=True, exist_ok=True)
 
 TOKEN_PATTERN = re.compile(r"[A-Za-z]+|\d{2,}|[A-Za-z]\d+|\d+[A-Za-z]+")
 

@@ -1,17 +1,12 @@
 from pyecharts import options as opts
 from pyecharts.charts import Pie
 import pickle
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-if str(ROOT) not in sys.path:
-    sys.path.append(str(ROOT))
-
-from project_paths import analysis_mid_dir, report_assets_dir
-
-PKL_DIR = analysis_mid_dir("analysis_task_3")
-CHART_DIR = report_assets_dir("analysis_task_3")
+PKL_DIR = ROOT / "mid" / "analysis" / "analysis_task_3"
+CHART_DIR = ROOT / "analysis" / "report_assets" / "analysis_task_3"
+CHART_DIR.mkdir(parents=True, exist_ok=True)
 
 
 def show_pie(title, labels, values, output_name):
