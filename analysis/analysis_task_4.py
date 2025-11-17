@@ -1,7 +1,16 @@
 import pickle
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
+from project_paths import DATA_DIR, analysis_mid_dir
 
 FILE_NAME = 'csdn'
 # FILE_NAME = 'yahoo'
+OUTPUT_DIR = analysis_mid_dir("task_4")
 
 
 def getRule(line):
@@ -34,7 +43,7 @@ def getRule(line):
     
 
 def main():
-    with open('../data/data_' + FILE_NAME + '.pkl', 'rb') as f:
+    with open(DATA_DIR / f'data_{FILE_NAME}.pkl', 'rb') as f:
         lines = pickle.load(f)[0]
 
     rule_lib = {}
@@ -50,7 +59,7 @@ def main():
         rules.append(rule)
     # print(rules[:5])
 
-    with open('./results/' + FILE_NAME + '_rules.pkl', 'wb') as f:
+    with open(OUTPUT_DIR / f"{FILE_NAME}_rules.pkl", 'wb') as f:
         pickle.dump(rules, f, pickle.HIGHEST_PROTOCOL)
     f.close()
 

@@ -24,7 +24,7 @@
 **主要职责：**
 - 从 `data/csdn.txt` 和 `data/yahoo.txt` 读取用户名、口令、邮箱，统一解析成 `Record(dataset, username, password, email)`。
 - 对用户名与口令进行 token 化，统计共享 token（精确匹配 / 大小写不敏感 / 编辑距离≤1）的覆盖情况和 Top token。
-- 将高频用户名 token 输出为 PCFG 可直接使用的概率词表文件 `pcfg_advance/lib/username_tokens_<dataset>.txt`。
+- 将高频用户名 token 输出为 PCFG 可直接使用的概率词表文件 `mid/pcfg_advance/lib/username_tokens_<dataset>.txt`。
 
 **关键代码点：**
 - `analysis/username_overlap.py:22-27`：定义 `ROOT`、`DATA_DIR`、`RESULTS_DIR`、`TOKEN_OUTPUT_DIR`，统一了脚本的输入输出路径，使脚本在项目根目录外执行时也能正确定位文件。
@@ -43,20 +43,20 @@
     - `lev_match`：在无 `lower` 命中的情况下，寻找编辑距离≤1 的近似 token 对。
   - 用 `counts` 统计样本总数及三种复用形式的命中次数；
   - 用 `token_counter` 聚合所有共享 token，为后续生成频率表和 PCFG 词表提供依据。
-- `analysis/username_overlap.py:185-195`：`write_csv(dataset, counts, token_counter)` 输出 `analysis/results/username_overlap_<dataset>.csv`，记录 token 频数和覆盖率。
-- `analysis/username_overlap.py:198-244`：`write_figures(dataset, ...)` 使用 `matplotlib`（配合 `SimHei` 字体配置）生成饼状图与条形图，输出 `analysis/results/username_overlap_<dataset>_pie.png`、`analysis/results/username_overlap_<dataset>_bar.png` 两类可视化。
+- `analysis/username_overlap.py:185-195`：`write_csv(dataset, counts, token_counter)` 输出 `mid/analysis/username_overlap/username_overlap_<dataset>.csv`，记录 token 频数和覆盖率。
+- `analysis/username_overlap.py:198-244`：`write_figures(dataset, ...)` 使用 `matplotlib`（配合 `SimHei` 字体配置）生成饼状图与条形图，输出 `analysis/report_assets/username_overlap/username_overlap_<dataset>_pie.png`、`analysis/report_assets/username_overlap/username_overlap_<dataset>_bar.png` 两类可视化。
 - `analysis/username_overlap.py:247-275`：`write_token_file(dataset, ...)` 核心：
   - 根据覆盖率阈值和最大 token 数选出高频用户名 token；
   - 按相对频率归一化为概率；
-  - 写入 `pcfg_advance/lib/username_tokens_<dataset>.txt`（例如 `username_tokens_csdn.txt`、`username_tokens_yahoo.txt`）。
+  - 写入 `mid/pcfg_advance/lib/username_tokens_<dataset>.txt`（例如 `username_tokens_csdn.txt`、`username_tokens_yahoo.txt`）。
 
 **新增文件：**
-- `analysis/results/username_overlap_csdn.csv` / `username_overlap_csdn_pie.png` / `username_overlap_csdn_bar.png`
-- `analysis/results/username_overlap_yahoo.csv` / `username_overlap_yahoo_pie.png` / `username_overlap_yahoo_bar.png`
-- `analysis/results/username_overlap.csv`（全部样本汇总）
-- `pcfg_advance/lib/username_tokens_csdn.txt`
-- `pcfg_advance/lib/username_tokens_yahoo.txt`
-- `pcfg_advance/lib/username_tokens.txt`（汇总或兜底版）
+- `mid/analysis/username_overlap/username_overlap_csdn.csv` / `username_overlap_csdn_pie.png` / `username_overlap_csdn_bar.png`
+- `mid/analysis/username_overlap/username_overlap_yahoo.csv` / `username_overlap_yahoo_pie.png` / `username_overlap_yahoo_bar.png`
+- `mid/analysis/username_overlap/username_overlap.csv`（全部样本汇总）
+- `mid/pcfg_advance/lib/username_tokens_csdn.txt`
+- `mid/pcfg_advance/lib/username_tokens_yahoo.txt`
+- `mid/pcfg_advance/lib/username_tokens.txt`（汇总或兜底版）
 
 这些文件是 PCFG 利用“用户名中常见片段”的直接数据来源。
 
@@ -89,15 +89,15 @@
     - `global_counter`：全局类别计数；
     - `dataset_counter`：分数据集的类别计数；
     - `examples`：为每个类别收集最多 5 条典型示例。
-- `analysis/username_transform_rules.py:237-258`：将上述统计写入 `analysis/results/username_transform_stats.json`，包含：
+- `analysis/username_transform_rules.py:237-258`：将上述统计写入 `mid/analysis/username_transform/username_transform_stats.json`，包含：
   - `category_counts`：每类变换的总体出现次数；
   - `dataset_breakdown`：各类变换在 CSDN/Yahoo 中的分布；
   - `examples`：示例用户名/口令对。
-- `analysis/username_transform_rules.py:260-304`：构建热力图矩阵并写入 `analysis/results/username_transform_heatmap.png`，便于直观观察哪类变换具有利用价值。
+- `analysis/username_transform_rules.py:260-304`：构建热力图矩阵并写入 `analysis/report_assets/username_transform/username_transform_heatmap.png`，便于直观观察哪类变换具有利用价值。
 
 **新增文件：**
-- `analysis/results/username_transform_stats.json`
-- `analysis/results/username_transform_heatmap.png`
+- `mid/analysis/username_transform/username_transform_stats.json`
+- `analysis/report_assets/username_transform/username_transform_heatmap.png`
 
 这些结果文件为在 PCFG 中增加如“用户名后缀数字”、“leet 化用户名”等策略提供量化依据。
 
@@ -120,12 +120,12 @@
 - `analysis/username_pattern_corr.py:158-214`：`main()` 中：
   - 构建 `length_data`（用户名长度、口令长度对）与 `pattern_matrix`（用户名模式、口令模式计数）；
   - 对 CSDN 与 Yahoo 分别计算 Pearson/Spearman；
-  - 绘制散点图 `analysis/results/username_pwd_length_corr.png`，并在图中标注各数据集的相关系数；
-  - 写出模式共现表 `analysis/results/username_pattern_matrix.csv`，按频数降序排列。
+  - 绘制散点图 `analysis/report_assets/username_pattern_corr/username_pwd_length_corr.png`，并在图中标注各数据集的相关系数；
+  - 写出模式共现表 `mid/analysis/username_pattern_corr/username_pattern_matrix.csv`，按频数降序排列。
 
 **新增文件：**
-- `analysis/results/username_pwd_length_corr.png`
-- `analysis/results/username_pattern_matrix.csv`
+- `analysis/report_assets/username_pattern_corr/username_pwd_length_corr.png`
+- `mid/analysis/username_pattern_corr/username_pattern_matrix.csv`
 
 这些结果文件为 PCFG 中“不同用户名长度/模式对应的密码长度/模式优先级”提供了定量依据。
 
@@ -219,7 +219,7 @@
 ## 7. 小结：我对 PCFG 的整体影响
 
 - 在 **analysis/** 目录下新增三个分析脚本和一批结果文件，从“共享子串”、“变换规则”、“长度与结构耦合”三个维度量化用户名-口令关系，为 PCFG 设计提供了数据基础。
-- 在 **pcfg_advance/lib/** 中新增用户名 token 词表文件，把上述分析中抽取出的高频用户名片段转化为 PCFG 可消费的概率词表。
+- 在 **mid/pcfg_advance/lib/** 中新增用户名 token 词表文件，把上述分析中抽取出的高频用户名片段转化为 PCFG 可消费的概率词表。
 - 在 **pcfg_advance/pcfg.advance.py** 中：
   - 引入了数据集与环境变量控制机制（`PCFG_DATASET`、`ENABLE_USERNAME_TOKENS`、`USERNAME_TOKEN_FILE`）；
   - 增加了用户名 token 加载与组合逻辑，使 PCFG 可以在原有规则基础上，生成带有用户名片段的候选密码；
@@ -231,13 +231,13 @@
 ### 可视化示例
 
 - CSDN 用户名-口令共享子串饼图：
-  ![用户名-口令共享子串饼图（CSDN）](analysis/results/username_overlap_csdn_pie.png)
+  ![用户名-口令共享子串饼图（CSDN）](analysis/report_assets/username_overlap/username_overlap_csdn_pie.png)
 - CSDN 用户名-口令共享子串条形图：
-  ![用户名-口令共享子串条形图（CSDN）](analysis/results/username_overlap_csdn_bar.png)
+  ![用户名-口令共享子串条形图（CSDN）](analysis/report_assets/username_overlap/username_overlap_csdn_bar.png)
 - Yahoo 用户名-口令共享子串饼图：
-  ![用户名-口令共享子串饼图（Yahoo）](analysis/results/username_overlap_yahoo_pie.png)
+  ![用户名-口令共享子串饼图（Yahoo）](analysis/report_assets/username_overlap/username_overlap_yahoo_pie.png)
 - Yahoo 用户名-口令共享子串条形图：
-  ![用户名-口令共享子串条形图（Yahoo）](analysis/results/username_overlap_yahoo_bar.png)
+  ![用户名-口令共享子串条形图（Yahoo）](analysis/report_assets/username_overlap/username_overlap_yahoo_bar.png)
 
 这些可视化说明 PCFG 不再只依赖密码本身的统计模式，还能够在一定程度上利用用户名信息来提升密码猜测的效率（尤其是在 CSDN 这类用户名与口令关系较强的数据集上）。
 
@@ -250,22 +250,22 @@
 - `analysis/username_overlap.py`
 - `analysis/username_pattern_corr.py`
 - `analysis/username_transform_rules.py`
-- `analysis/results/username_overlap.csv`
-- `analysis/results/username_overlap_pie.png`
-- `analysis/results/username_overlap_bar.png`
-- `analysis/results/username_overlap_csdn.csv`
-- `analysis/results/username_overlap_csdn_pie.png`
-- `analysis/results/username_overlap_csdn_bar.png`
-- `analysis/results/username_overlap_yahoo.csv`
-- `analysis/results/username_overlap_yahoo_pie.png`
-- `analysis/results/username_overlap_yahoo_bar.png`
-- `analysis/results/username_pattern_matrix.csv`
-- `analysis/results/username_pwd_length_corr.png`
-- `analysis/results/username_transform_heatmap.png`
-- `analysis/results/username_transform_stats.json`
-- `pcfg_advance/lib/username_tokens.txt`
-- `pcfg_advance/lib/username_tokens_csdn.txt`
-- `pcfg_advance/lib/username_tokens_yahoo.txt`
+- `mid/analysis/username_overlap/username_overlap.csv`
+- `analysis/report_assets/username_overlap/username_overlap_pie.png`
+- `analysis/report_assets/username_overlap/username_overlap_bar.png`
+- `mid/analysis/username_overlap/username_overlap_csdn.csv`
+- `analysis/report_assets/username_overlap/username_overlap_csdn_pie.png`
+- `analysis/report_assets/username_overlap/username_overlap_csdn_bar.png`
+- `mid/analysis/username_overlap/username_overlap_yahoo.csv`
+- `analysis/report_assets/username_overlap/username_overlap_yahoo_pie.png`
+- `analysis/report_assets/username_overlap/username_overlap_yahoo_bar.png`
+- `mid/analysis/username_pattern_corr/username_pattern_matrix.csv`
+- `analysis/report_assets/username_pattern_corr/username_pwd_length_corr.png`
+- `analysis/report_assets/username_transform/username_transform_heatmap.png`
+- `mid/analysis/username_transform/username_transform_stats.json`
+- `mid/pcfg_advance/lib/username_tokens.txt`
+- `mid/pcfg_advance/lib/username_tokens_csdn.txt`
+- `mid/pcfg_advance/lib/username_tokens_yahoo.txt`
 - `username_pwd_report.md`
 - `username_pwd_code_notes.md`
 
@@ -273,5 +273,5 @@
 - `DataPreprocessing.py`：调整原始数据路径与默认执行函数，为用户名-口令分析提供统一输入。
 - `pcfg_advance/pcfg.advance.py`：引入用户名 token 加载与组合逻辑，增加环境变量控制和输出路径标准化。
 - `pcfg_advance/test.py`：标准化数据与结果路径，支持在不同工作目录下稳定评测 PCFG。
-- `pcfg_advance/info.txt`、`pcfg_advance/res.txt`：测试运行过程中持续追加的结果记录文件。
+- `mid/pcfg_advance/info.txt`、`mid/pcfg_advance/res.txt`：测试运行过程中持续追加的结果记录文件。
 - `.gitignore`：根据需要更新忽略规则（与功能逻辑关系较小）。

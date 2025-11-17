@@ -1,9 +1,18 @@
 import pickle
 import re
+import sys
 from math import log
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
+from project_paths import DATA_DIR, analysis_mid_dir
 
 FILE_NAME = 'csdn'
 # FILE_NAME = 'yahoo'
+OUTPUT_DIR = analysis_mid_dir("task_5")
 
 lib_path = './lib/word_lib.txt'
 # Build a cost dictionary, assuming Zipf's law and cost = -math.log(probability).
@@ -73,7 +82,7 @@ def word_analysis(passwords, tag):
 
     
 def main():
-    with open('../data/data_' + FILE_NAME + '.pkl', 'rb') as f:
+    with open(DATA_DIR / f'data_{FILE_NAME}.pkl', 'rb') as f:
         passwords = pickle.load(f)[0]
 
     pinyin_lib = word_analysis(passwords, tag='py')
@@ -99,7 +108,7 @@ def main():
     # print(lines)
     # exit()
     
-    target_path = './results/' + FILE_NAME + '_lib_pcfg.txt'
+    target_path = OUTPUT_DIR / f"{FILE_NAME}_lib_pcfg.txt"
     with open(target_path, 'w') as f:
         f.write('\n'.join(lines))
     f.close()

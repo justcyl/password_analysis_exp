@@ -3,9 +3,9 @@
 用户名与口令共享子串/词汇复用分析。
 
 输出（按数据集命名）：
-1. analysis/results/username_overlap_<dataset>.csv - 子串出现次数与覆盖率
-2. analysis/results/username_overlap_<dataset>_{pie,bar}.png - Top-N 共享子串占比
-3. pcfg_advance/lib/username_tokens_<dataset>.txt - PCFG 可直接引用的 token 概率表
+1. mid/analysis/username_overlap/username_overlap_<dataset>.csv - 子串出现次数与覆盖率
+2. analysis/report_assets/username_overlap/username_overlap_<dataset>_{pie,bar}.png - Top-N 共享子串占比
+3. mid/pcfg_advance/lib/username_tokens_<dataset>.txt - PCFG 可直接引用的 token 概率表
 """
 
 from __future__ import annotations
@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import csv
 import re
+import sys
 from collections import Counter, defaultdict
 from dataclasses import dataclass
 from pathlib import Path
@@ -21,15 +22,18 @@ from typing import Dict, List, Set, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
+from project_paths import DATA_DIR, analysis_mid_dir, pcfg_mid_dir, report_assets_dir
+
 plt.rcParams["font.sans-serif"] = ["SimHei"]
 plt.rcParams["axes.unicode_minus"] = False
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
-RESULTS_DIR = ROOT / "analysis" / "results"
-RESULTS_DIR.mkdir(parents=True, exist_ok=True)
-TOKEN_OUTPUT_DIR = ROOT / "pcfg_advance" / "lib"
-TOKEN_OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+CSV_OUTPUT_DIR = analysis_mid_dir("username_overlap")
+TOKEN_OUTPUT_DIR = pcfg_mid_dir("lib")
+CHART_OUTPUT_DIR = report_assets_dir("username_overlap")
 
 TOKEN_PATTERN = re.compile(r"[A-Za-z]+|\d{2,}|[A-Za-z]\d+|\d+[A-Za-z]+")
 
@@ -189,7 +193,7 @@ def run_analysis(records: List[Record]) -> Tuple[Counter, Counter]:
 
 def write_csv(dataset: str, counts: Counter, token_counter: Counter) -> Path:
     suffix = "" if dataset == "all" else f"_{dataset}"
-    csv_path = RESULTS_DIR / f"username_overlap{suffix}.csv"
+    csv_path = CSV_OUTPUT_DIR / f"username_overlap{suffix}.csv"
     with csv_path.open("w", newline="", encoding="utf-8") as csvfile:
         writer = csv.writer(csvfile)
         writer.writerow(["token", "count", "coverage_percent"])
@@ -219,7 +223,7 @@ def write_figures(dataset: str, counts: Counter, token_counter: Counter) -> Tupl
         counterclock=False,
     )
     ax_pie.set_title(f"用户名子串复用 Top-10（{dataset}）")
-    pie_path = RESULTS_DIR / f"username_overlap{suffix}_pie.png"
+    pie_path = CHART_OUTPUT_DIR / f"username_overlap{suffix}_pie.png"
     fig_pie.tight_layout()
     fig_pie.savefig(pie_path, dpi=200)
     plt.close(fig_pie)
@@ -233,7 +237,7 @@ def write_figures(dataset: str, counts: Counter, token_counter: Counter) -> Tupl
     ax_bar.set_ylabel("占比（%）")
     ax_bar.set_title(f"用户名子串复用 Top-10（{dataset}）")
     ax_bar.grid(True, axis="y", linestyle="--", alpha=0.4)
-    bar_path = RESULTS_DIR / f"username_overlap{suffix}_bar.png"
+    bar_path = CHART_OUTPUT_DIR / f"username_overlap{suffix}_bar.png"
     fig_bar.tight_layout()
     fig_bar.savefig(bar_path, dpi=200)
     plt.close(fig_bar)

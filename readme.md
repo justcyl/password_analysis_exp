@@ -81,7 +81,7 @@ Tips：有些密码中包含又分割符，因此采用了多层拼接模式以�
     python ./analysis_task_3.py
     ```
 
-4. 画图：./task_3_pictures.py。根据上一步得到的单词/拼音与其出现次数的元组，得到不同数据集中各个长度单词/拼音中出现频数最高的结果，以便后续PCFG算法使用。得到的图片保存在./analysis/results文件夹中。其中：
+4. 画图：./task_3_pictures.py。根据上一步得到的单词/拼音与其出现次数的元组，得到不同数据集中各个长度单词/拼音中出现频数最高的结果，以便后续PCFG算法使用。生成的 HTML 图表保存在 `analysis/report_assets/analysis_task_3/`。其中：
    
     - csdn_length_pinyin_analysis.html：csdn数据集中长度为1~10分别出现最多的拼音。
     - csdn_length_word_analysis.html：csdn数据集中长度为1~10分别出现最多的单词。
@@ -102,7 +102,7 @@ Tips：有些密码中包含又分割符，因此采用了多层拼接模式以�
 
 3. 得到的结果：各种模式及其出现的频率。
 
-4. 结果存放路径：./analysis/results/CSDN_rules.pkl和./analysis/results/yahoo_rules.pkl。
+4. 结果存放路径：`mid/analysis/task_4/CSDN_rules.pkl` 和 `mid/analysis/task_4/yahoo_rules.pkl`。
 
 5. 使用方法：
     ```bash
@@ -116,7 +116,7 @@ Tips：有些密码中包含又分割符，因此采用了多层拼接模式以�
 
 2. 源数据：PCFG算法使用的训练集。（github中未上传）
 
-3. 结果存放路径：./analysis/results/csdn_lib_pcfg.txt和./analysis/results/yahoo_lib_pcfg.txt
+3. 结果存放路径：`mid/analysis/task_5/csdn_lib_pcfg.txt` 和 `mid/analysis/task_5/yahoo_lib_pcfg.txt`
 
 4. 使用方法：
     ```bash
@@ -134,9 +134,9 @@ Tips：有些密码中包含又分割符，因此采用了多层拼接模式以�
 
 `./data/*`：对 csdn 与 yahoo 口令按照分析结果进行筛选后，分解为训练集与测试集后的结果
 
-`./csdn/*`：基于 csdn 数据集生成的有效规则序列与有效模式序列（筛选后的结果）
+`mid/pcfg_advance/csdn/*`：基于 csdn 数据集生成的有效规则序列与有效模式序列（筛选后的结果）
 
-`./yahoo/*`：基于 yahoo 数据集生成的有效规则序列与有效模式序列（筛选后的结果）
+`mid/pcfg_advance/yahoo/*`：基于 yahoo 数据集生成的有效规则序列与有效模式序列（筛选后的结果）
 
 > char_rule：基于密码中最长相邻字符串统计的规则
 >
@@ -207,4 +207,3 @@ Tips：有些密码中包含又分割符，因此采用了多层拼接模式以�
 2、文件加载后即可执行 generate() 函数，他将以列表的形式返回所有生成的口令
 
 3、选择前 N 个将生成的口令写入到本地文件 `./*_genpwds.txt`
-

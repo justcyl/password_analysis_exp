@@ -1,11 +1,16 @@
 #!/usr/bin/env python3
 """
 分析用户名与口令之间的确定性变换规则，并输出统计与热力图。
+
+输出：
+1. mid/analysis/username_transform/username_transform_stats.json
+2. analysis/report_assets/username_transform/username_transform_heatmap.png
 """
 
 from __future__ import annotations
 
 import json
+import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Dict, List, Set, Tuple
@@ -13,12 +18,15 @@ from typing import Dict, List, Set, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
+from project_paths import DATA_DIR, analysis_mid_dir, report_assets_dir
 plt.rcParams["font.sans-serif"] = ["Arial Unicode MS"]
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
-RESULTS_DIR = ROOT / "analysis" / "results"
-RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+STATS_OUTPUT_DIR = analysis_mid_dir("username_transform")
+HEATMAP_OUTPUT_DIR = report_assets_dir("username_transform")
 
 SOURCES = [
     ("csdn", DATA_DIR / "csdn.txt"),
@@ -201,7 +209,7 @@ def main() -> None:
         "dataset_breakdown": {dataset: dict(counter) for dataset, counter in dataset_counter.items()},
         "examples": examples,
     }
-    json_path = RESULTS_DIR / "username_transform_stats.json"
+    json_path = STATS_OUTPUT_DIR / "username_transform_stats.json"
     with json_path.open("w", encoding="utf-8") as fh:
         serializable = {
             "category_counts": dict(global_counter),
@@ -229,7 +237,7 @@ def main() -> None:
 
     fig.colorbar(im, ax=ax, fraction=0.046, pad=0.04, label="匹配次数")
     fig.tight_layout()
-    heatmap_path = RESULTS_DIR / "username_transform_heatmap.png"
+    heatmap_path = HEATMAP_OUTPUT_DIR / "username_transform_heatmap.png"
     fig.savefig(heatmap_path, dpi=200)
     plt.close(fig)
 

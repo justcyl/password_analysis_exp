@@ -1,19 +1,27 @@
 import os
 import pickle
+import sys
+from pathlib import Path
 from progress.bar import Bar
 from utils import load_data
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
+from project_paths import DATA_DIR, pcfg_mid_dir
+
 FILE_NAME = 'yahoo'
 # FILE_NAME = 'csdn'
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.abspath(os.path.join(BASE_DIR, '..', 'data'))
+BASE_DIR = Path(__file__).resolve().parent
+MID_DIR = pcfg_mid_dir()
 
 
 def test(file_name):
-    data_path = os.path.join(DATA_DIR, f'data_{file_name}.pkl')
+    data_path = DATA_DIR / f'data_{file_name}.pkl'
     _, test_data = load_data(data_path)
-    guesses_path = os.path.join(BASE_DIR, f'{file_name}_genpwds.txt')
-    with open(guesses_path, 'r', encoding='utf-8', errors='ignore') as f:
+    guesses_path = MID_DIR / f'{file_name}_genpwds.txt'
+    with guesses_path.open('r', encoding='utf-8', errors='ignore') as f:
         lines = f.readlines()
     gen_pwds = [line.split(' ')[0].strip() for line in lines]
 
@@ -31,11 +39,11 @@ def test(file_name):
 
     acc = float(match_count) / float(total_count)
     print(acc)
-    with open(os.path.join(BASE_DIR, 'res.txt'), 'a', encoding='utf-8') as f:
+    with (MID_DIR / 'res.txt').open('a', encoding='utf-8') as f:
         f.write('{}\n'.format(acc))
 
     matched_str = '\n'.join([str(item) for item in matched_lst])
-    with open(os.path.join(BASE_DIR, 'info.txt'), 'a', encoding='utf-8') as f:
+    with (MID_DIR / 'info.txt').open('a', encoding='utf-8') as f:
         f.write(matched_str)
 
 

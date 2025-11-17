@@ -2,11 +2,19 @@ import pickle
 from progress.bar import Bar
 import os
 import re
+import sys
+from pathlib import Path
 import numpy as np
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
+from project_paths import DATA_DIR
 
 FILE_NAME = 'yahoo'
 # FILE_NAME = 'csdn'
-FILE_PATH = "./data/" + FILE_NAME + ".txt"
+FILE_PATH = DATA_DIR / f"{FILE_NAME}.txt"
 TOTAL_COUNT = None
 
 # 读取密码，统计总数
@@ -58,7 +66,7 @@ def _split_data(data, count=50000):
 
 def filter_split_data(passwords):
     # 构成模式
-    data_save_path = './data/data_{}.pkl'.format(FILE_NAME)
+    data_save_path = DATA_DIR / f'data_{FILE_NAME}.pkl'
     if not os.path.exists(data_save_path):
         filtered_data = _filter_data(passwords)
         train_data, test_data = _split_data(filtered_data)

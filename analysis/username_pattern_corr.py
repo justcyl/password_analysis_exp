@@ -3,8 +3,8 @@
 用户名-口令长度与结构耦合分析。
 
 输出：
-1. analysis/results/username_pwd_length_corr.png
-2. analysis/results/username_pattern_matrix.csv
+1. analysis/report_assets/username_pattern_corr/username_pwd_length_corr.png
+2. mid/analysis/username_pattern_corr/username_pattern_matrix.csv
 3. 控制台打印 Pearson/Spearman 相关系数。
 """
 
@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import csv
 import math
+import sys
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Sequence, Tuple
@@ -19,12 +20,16 @@ from typing import Dict, List, Sequence, Tuple
 import matplotlib.pyplot as plt
 import numpy as np
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
+from project_paths import DATA_DIR, analysis_mid_dir, report_assets_dir
+
 plt.rcParams["font.sans-serif"] = ["Arial Unicode MS"]
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
-RESULTS_DIR = ROOT / "analysis" / "results"
-RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+SCATTER_OUTPUT_DIR = report_assets_dir("username_pattern_corr")
+MATRIX_OUTPUT_DIR = analysis_mid_dir("username_pattern_corr")
 
 SOURCES = [
     ("csdn", DATA_DIR / "csdn.txt"),
@@ -189,12 +194,12 @@ def main() -> None:
     ax.legend()
     ax.grid(True, linestyle="--", linewidth=0.5, alpha=0.5)
     fig.tight_layout()
-    scatter_path = RESULTS_DIR / "username_pwd_length_corr.png"
+    scatter_path = SCATTER_OUTPUT_DIR / "username_pwd_length_corr.png"
     fig.savefig(scatter_path, dpi=200)
     plt.close(fig)
 
     # 写入模式矩阵
-    matrix_path = RESULTS_DIR / "username_pattern_matrix.csv"
+    matrix_path = MATRIX_OUTPUT_DIR / "username_pattern_matrix.csv"
     with matrix_path.open("w", encoding="utf-8", newline="") as fh:
         writer = csv.writer(fh)
         writer.writerow(["username_pattern", "password_pattern", "count"])

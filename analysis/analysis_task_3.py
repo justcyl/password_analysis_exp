@@ -1,12 +1,21 @@
 from math import log
 import re
 import pickle
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
+from project_paths import DATA_DIR, analysis_mid_dir
 
 
 # FILE_NAME = 'yahoo'
 FILE_NAME = 'csdn'
-FILE_PATH = "../data/" + FILE_NAME + ".txt" # 453491
+FILE_PATH = DATA_DIR / f"{FILE_NAME}.txt" # 453491
 TOTAL_COUNT = None
+OUTPUT_DIR = analysis_mid_dir("analysis_task_3")
 
 
 def init_data():
@@ -86,11 +95,11 @@ def word_analysis(passwords):
 
     # 将排序后得到的列表保存在本地
     if 'pinyin' in lib_path:
-        with open('./mid/' + FILE_NAME + '_sorted_pinyin_lib.pkl', 'wb') as f:
+        with open(OUTPUT_DIR / f"{FILE_NAME}_sorted_pinyin_lib.pkl", 'wb') as f:
             pickle.dump(sorted_lib, f, pickle.HIGHEST_PROTOCOL)
         f.close()
     else:
-        with open('./mid/' + FILE_NAME + '_sorted_word_lib.pkl', 'wb') as f:
+        with open(OUTPUT_DIR / f"{FILE_NAME}_sorted_word_lib.pkl", 'wb') as f:
             pickle.dump(sorted_lib, f, pickle.HIGHEST_PROTOCOL)
         f.close()
 
@@ -104,11 +113,11 @@ def main():
 
 def show():
     if 'pinyin' in lib_path:
-        with open('./mid/' + FILE_NAME + '_sorted_pinyin_lib.pkl', 'rb') as f:
+        with open(OUTPUT_DIR / f"{FILE_NAME}_sorted_pinyin_lib.pkl", 'rb') as f:
             sorted_lib = pickle.load(f)
         f.close()
     else:
-        with open('./mid/' + FILE_NAME + '_sorted_word_lib.pkl', 'rb') as f:
+        with open(OUTPUT_DIR / f"{FILE_NAME}_sorted_word_lib.pkl", 'rb') as f:
             sorted_lib = pickle.load(f)
         f.close()
 
@@ -117,11 +126,11 @@ def show():
 
 
 def pkl2txt():
-    with open('./mid/' + FILE_NAME + '_sorted_pinyin_lib.pkl', 'rb') as f:
+    with open(OUTPUT_DIR / f"{FILE_NAME}_sorted_pinyin_lib.pkl", 'rb') as f:
         pinyin_lib = pickle.load(f)
     f.close()
 
-    with open('./mid/' + FILE_NAME + '_sorted_word_lib.pkl', 'rb') as f:
+    with open(OUTPUT_DIR / f"{FILE_NAME}_sorted_word_lib.pkl", 'rb') as f:
         word_lib = pickle.load(f)
     f.close()
 
@@ -143,7 +152,7 @@ def pkl2txt():
         line += ' ' + str(item[1] / total)
         lines.append(line)
     
-    target_path = './mid/' + FILE_NAME + '_lib.txt'
+    target_path = OUTPUT_DIR / f"{FILE_NAME}_lib.txt"
     with open(target_path, 'w') as f:
         f.write('\n'.join(lines))
     f.close()

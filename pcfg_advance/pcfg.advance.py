@@ -2,15 +2,31 @@ from tqdm import tqdm
 import itertools
 import gc
 import os
+import sys
+from pathlib import Path
+
 from test import test
 from generate_rules import FILE_NAME as RULE_FILE_NAME
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
+from project_paths import DATA_DIR, PCFG_LIB_DIR, pcfg_mid_dir
 
 # Default dataset follows generate_rules unless overridden via env
 FILE_NAME = RULE_FILE_NAME if RULE_FILE_NAME else 'csdn'
 env_filename = os.getenv('PCFG_DATASET')
 if env_filename:
     FILE_NAME = env_filename.lower()
-FILE_PATH = f"./data/data_{FILE_NAME}.pkl"
+FILE_PATH = DATA_DIR / f"data_{FILE_NAME}.pkl"
+BASE_DIR = Path(__file__).resolve().parent
+MID_OUTPUT_DIR = pcfg_mid_dir()
+RULE_DIR = pcfg_mid_dir(FILE_NAME)
+USERNAME_TOKEN_DIR = pcfg_mid_dir("lib")
+RES_PATH = MID_OUTPUT_DIR / "res.txt"
+INFO_PATH = MID_OUTPUT_DIR / "info.txt"
+GENPWD_PATH = MID_OUTPUT_DIR / f"{FILE_NAME}_genpwds.txt"
 
 def print_lst(lst):
 
@@ -24,23 +40,24 @@ def print_lst(lst):
 
 
 class PCFG:
-    def __init__(self,data_dir=f'./{FILE_NAME}', 
-                # char_rule_filename='char_rule.txt', 
+    def __init__(self,data_dir=None, 
                 char_rule_filename='char_lib.txt', 
                 number_rule_filename='number_rule.txt',
                 pattern_rule_filename='pattern_rule.txt',
                 username_token_filename=None):
 
-        self.base_dir = os.path.dirname(os.path.abspath(__file__))
-        if not os.path.isabs(data_dir):
-            data_dir = os.path.join(self.base_dir, data_dir)
-        self.data_dir = data_dir
+        self.base_dir = BASE_DIR
+        self.mid_dir = MID_OUTPUT_DIR
+        rule_dir = Path(data_dir) if data_dir else RULE_DIR
+        if not rule_dir.is_absolute():
+            rule_dir = (self.base_dir / rule_dir).resolve()
+        self.data_dir = rule_dir
         env_flag = os.getenv('ENABLE_USERNAME_TOKENS', '1').lower()
         self.enable_username_tokens = env_flag not in ('0', 'false', 'off', 'no')
 
-        char_rule = self.get_data(data_dir, char_rule_filename)
-        number_rule = self.get_data(data_dir, number_rule_filename)
-        pattern_rule = self.get_data(data_dir, pattern_rule_filename)
+        char_rule = self.get_data(rule_dir, char_rule_filename)
+        number_rule = self.get_data(rule_dir, number_rule_filename)
+        pattern_rule = self.get_data(rule_dir, pattern_rule_filename)
         self.pattern_rules = [ self._str2tuple(rule) for rule in pattern_rule]
 
         self.rule_char = self.get_rule(char_rule) # 长度与内容的映射
@@ -55,9 +72,9 @@ class PCFG:
         self.username_numeric_limit = 25
         self.username_char_limit = 25
 
-        with open(os.path.join(self.base_dir, 'res.txt'), 'a', encoding='utf-8') as f:
+        with RES_PATH.open('a', encoding='utf-8') as f:
             f.write('{}, {}, {}, result = '.format(FILE_NAME, char_rule_filename, number_rule_filename))
-        with open(os.path.join(self.base_dir, 'info.txt'), 'a', encoding='utf-8') as f:
+        with INFO_PATH.open('a', encoding='utf-8') as f:
             f.write('{}, {}, {}, infos:\n'.format(FILE_NAME, char_rule_filename, number_rule_filename))
 
     def _str2tuple(self, rule):
@@ -70,7 +87,10 @@ class PCFG:
         return res
 
     def get_data(self, data_dir, filename):
-        with open(os.path.join(data_dir, filename), 'r') as f:
+        file_path = Path(data_dir) / filename
+        if not file_path.exists():
+            return []
+        with file_path.open('r', encoding='utf-8') as f:
             lines = f.readlines()
         return [line.strip().split(' ') for line in lines if not line.isspace()]
 
@@ -88,13 +108,13 @@ class PCFG:
         return rule
 
     def load_username_tokens(self, rel_path):
-        filepath = rel_path
-        if not os.path.isabs(filepath):
-            filepath = os.path.join(self.base_dir, rel_path)
-        if not os.path.exists(filepath):
+        filepath = Path(rel_path)
+        if not filepath.is_absolute():
+            filepath = (self.base_dir / filepath).resolve()
+        if not filepath.exists():
             return []
         tokens = []
-        with open(filepath, 'r', encoding='utf-8') as f:
+        with filepath.open('r', encoding='utf-8') as f:
             for line in f:
                 parts = line.strip().split(' ')
                 if len(parts) != 2:
@@ -183,20 +203,24 @@ class PCFG:
     def _resolve_username_token_path(self, override_path):
         env_override = os.getenv('USERNAME_TOKEN_FILE')
         if override_path:
-            return override_path
+            return Path(override_path)
         if env_override:
-            return env_override
-        dataset_specific = f'lib/username_tokens_{FILE_NAME}.txt'
-        dataset_path = os.path.join(self.base_dir, dataset_specific)
-        if os.path.exists(dataset_path):
-            return dataset_specific
-        return 'lib/username_tokens.txt'
+            return Path(env_override)
+        dataset_specific_mid = USERNAME_TOKEN_DIR / f'username_tokens_{FILE_NAME}.txt'
+        if dataset_specific_mid.exists():
+            return dataset_specific_mid
+        shared_mid = USERNAME_TOKEN_DIR / 'username_tokens.txt'
+        if shared_mid.exists():
+            return shared_mid
+        dataset_specific_repo = PCFG_LIB_DIR / f'username_tokens_{FILE_NAME}.txt'
+        if dataset_specific_repo.exists():
+            return dataset_specific_repo
+        return PCFG_LIB_DIR / 'username_tokens.txt'
 
 if __name__ == "__main__":
     pcfg = PCFG()
     gen_pwds = pcfg.generate()
-    output_path = os.path.join(pcfg.base_dir, f'{FILE_NAME}_genpwds.txt')
-    with open(output_path, 'w') as f:
+    with GENPWD_PATH.open('w') as f:
         for gen_pwd in gen_pwds[:200000]:
             f.write(f'{gen_pwd[0]} {gen_pwd[1]}\n')
     

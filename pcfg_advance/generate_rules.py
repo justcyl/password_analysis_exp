@@ -2,14 +2,23 @@ import pickle
 from progress.bar import Bar
 import os
 import re
+import sys
+from pathlib import Path
 import numpy as np
 from utils import load_data
 import string
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
+from project_paths import DATA_DIR, pcfg_mid_dir
+
 FILE_NAME = 'yahoo'
 # FILE_NAME = 'csdn'
-FILE_PATH = f"./data/data_{FILE_NAME}.pkl"
+FILE_PATH = DATA_DIR / f"data_{FILE_NAME}.pkl"
 TOTAL_COUNT = None
+OUTPUT_DIR = pcfg_mid_dir(FILE_NAME)
 
 def generate_char_rule(passwords):
     char_rule = {}
@@ -25,7 +34,7 @@ def generate_char_rule(passwords):
     bar.finish()
     total_count = len(passwords)
     sorted_dict = sorted(char_rule.items(), key=lambda item: item[1], reverse=True)
-    with open(f'./{FILE_NAME}/char_rule.txt', 'w', encoding='utf-8', errors='ignore') as f:
+    with open(OUTPUT_DIR / 'char_rule.txt', 'w', encoding='utf-8', errors='ignore') as f:
         for item in sorted_dict:
             key, value = item
             if(value <= 8):
@@ -50,7 +59,7 @@ def generate_number_rule(passwords):
     bar.finish()
     total_count = len(passwords)
     sorted_dict = sorted(number_rule.items(), key=lambda item: item[1], reverse=True)
-    with open(f'./{FILE_NAME}/number_rule.txt', 'w', encoding='utf-8', errors='ignore') as f:
+    with open(OUTPUT_DIR / 'number_rule.txt', 'w', encoding='utf-8', errors='ignore') as f:
         for item in sorted_dict:
             key, value = item
             if(value <= 8):
@@ -78,7 +87,7 @@ def generate_pattern_rule(passwords):
 
     total_count = len(passwords)
     sorted_dict = sorted(pattern_rule.items(), key=lambda item: item[1], reverse=True)
-    with open(f'./{FILE_NAME}/pattern_rule.txt', 'w', encoding='utf-8', errors='ignore') as f:
+    with open(OUTPUT_DIR / 'pattern_rule.txt', 'w', encoding='utf-8', errors='ignore') as f:
         for item in sorted_dict:
             key, value = item
             key = key[:-1] # 去除末尾的逗号

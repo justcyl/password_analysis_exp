@@ -1,8 +1,20 @@
 from pyecharts import options as opts
 from pyecharts.charts import Pie
 import pickle
+import sys
+from pathlib import Path
 
-def show_pie(title, labels, values):
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.append(str(ROOT))
+
+from project_paths import analysis_mid_dir, report_assets_dir
+
+PKL_DIR = analysis_mid_dir("analysis_task_3")
+CHART_DIR = report_assets_dir("analysis_task_3")
+
+
+def show_pie(title, labels, values, output_name):
     pie = (
         Pie()
             .add("", [list(z) for z in zip(labels, values)], radius=["30%","50%"], center=["40%","60%"])
@@ -13,7 +25,7 @@ def show_pie(title, labels, values):
                             )
             .set_series_opts(label_opts=opts.LabelOpts(formatter="{b}: {d}%"))
         )
-    pie.render(title + '.html')
+    pie.render(str((CHART_DIR / f"{output_name}.html").resolve()))
 
 
 # FILE_NAME = 'csdn'
@@ -21,7 +33,7 @@ FILE_NAME = 'yahoo'
 
 
 def main():
-    with open('./results/' + FILE_NAME + '_sorted_pinyin_lib.pkl', 'rb') as f:
+    with open(PKL_DIR / f'{FILE_NAME}_sorted_pinyin_lib.pkl', 'rb') as f:
         sorted_lib = pickle.load(f)
 
     len_lib = {}
@@ -32,9 +44,9 @@ def main():
     # exit()
     f.close()
 
-    show_pie('./results/' + FILE_NAME + '_length_pinyin_analysis', len_lib.keys(), len_lib.values())
+    show_pie(f'{FILE_NAME} 拼音长度分布', list(len_lib.keys()), list(len_lib.values()), f'{FILE_NAME}_length_pinyin_analysis')
     
-    with open('./results/' + FILE_NAME + '_sorted_word_lib.pkl', 'rb') as f:
+    with open(PKL_DIR / f'{FILE_NAME}_sorted_word_lib.pkl', 'rb') as f:
         sorted_lib = pickle.load(f)
 
     len_lib = {}
@@ -44,7 +56,7 @@ def main():
 
     f.close()
 
-    show_pie('./results/' + FILE_NAME + '_length_word_analysis', len_lib.keys(), len_lib.values())
+    show_pie(f'{FILE_NAME} 单词长度分布', list(len_lib.keys()), list(len_lib.values()), f'{FILE_NAME}_length_word_analysis')
 
 
 if __name__ == "__main__":
