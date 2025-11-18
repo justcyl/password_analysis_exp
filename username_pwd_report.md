@@ -17,8 +17,17 @@
 **结果 / 可视化**
 - 数据规模：CSDN 6,427,769 条、Yahoo 442,837 条；全部分析脚本的 CSV/JSON 写入 `mid/analysis/...`，配套图表位于 `analysis/report_assets/...`。
 - 共享子串：整体 18.21% 样本在口令中复用用户名 token（CSDN 19.23%，Yahoo 3.37%），Levenshtein≤1 覆盖率 2.37%。Top-10 token 如 `a`、`qq`、`123`、`520`（CSDN）与两位数字年份（Yahoo），可视化见 `analysis/report_assets/username_overlap/username_overlap_<dataset>_{pie,bar}.png`。
+
+  ![用户名-口令共享子串饼图（CSDN）](analysis/report_assets/username_overlap/username_overlap_csdn_pie.png)
+  ![用户名-口令共享子串条形图（CSDN）](analysis/report_assets/username_overlap/username_overlap_csdn_bar.png)
+  ![用户名-口令共享子串饼图（Yahoo）](analysis/report_assets/username_overlap/username_overlap_yahoo_pie.png)
+  ![用户名-口令共享子串条形图（Yahoo）](analysis/report_assets/username_overlap/username_overlap_yahoo_bar.png)
 - 确定性变换：`edit_distance_1`、`exact_casefold`、`exact_case_sensitive` 分别占 5.79%/4.51%/4.29%，`suffix_digits` 1.23%，`leet_substitution` 0.74%。热力图位于 `analysis/report_assets/username_transform/username_transform_heatmap.png`。
+
+  ![用户名-口令变换热力图](analysis/report_assets/username_transform/username_transform_heatmap.png)
 - 长度耦合：CSDN Pearson 0.161 / Spearman 0.148，Yahoo 0.042 / 0.073，显示弱正相关；模式矩阵显示“字母用户名 + 8 位数字口令”最常见。散点图 `analysis/report_assets/username_pattern_corr/username_pwd_length_corr.png`，矩阵 `mid/analysis/username_pattern_corr/username_pattern_matrix.csv`。
+
+  ![用户名-口令长度耦合散点图](analysis/report_assets/username_pattern_corr/username_pwd_length_corr.png)
 - PCFG 词表：`analysis/username_overlap.py` 会依据阈值刷新 `mid/pcfg_advance/lib/username_tokens_<dataset>.txt` 与汇总版 `username_tokens.txt`，供 PCFG 引擎直接加载。
 
 ### 测试流程
