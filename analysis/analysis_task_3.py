@@ -5,6 +5,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_DIR = ROOT / "data"
+SCRIPT_DIR = Path(__file__).resolve().parent
+LIB_DIR = SCRIPT_DIR / "lib"
 OUTPUT_DIR = ROOT / "mid" / "analysis" / "analysis_task_3"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
@@ -24,7 +26,7 @@ def init_data():
 
     # print("Total Count =", TOTAL_COUNT)
 
-    if("csdn" in FILE_PATH):
+    if FILE_NAME == 'csdn':
         passwords = ['#'.join(line.split(' # ')[1:-1]).strip()
                      for line in lines]
     else:
@@ -35,8 +37,8 @@ def init_data():
 
 
 # Build a cost dictionary, assuming Zipf's law and cost = -math.log(probability).
-lib_path = './lib/word_lib.txt'
-# lib_path = './lib/pinyin_lib.txt'
+lib_path = str(LIB_DIR / 'word_lib.txt')
+# lib_path = str(LIB_DIR / 'pinyin_lib.txt')
 words = open(lib_path, encoding='utf-8').read().split()
 wordcost = dict((k, log((i + 1) * log(len(words)))) for i, k in enumerate(words))
 maxword = max(len(x) for x in words)
